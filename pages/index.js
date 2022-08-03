@@ -17,6 +17,9 @@ export default function Home() {
   const [position, setPosition] = useState("start");
   const [game, setGame] = useState();
   const [gameState, setGameState] = useState("");
+  const [orientation, setOrientation] = useState();
+  const [positionsEvaluated, setPositionsEvaluated] = useState(0);
+  const [timeTaken, setTimeTaken] = useState(0);
 
   var pawn_value = 100;
   var knight_value = 320;
@@ -28,8 +31,14 @@ export default function Home() {
   useEffect(() => {
     setGame(new Chess());
     // setTimeout(() => randomMove(), 1000);
-    setGameState("White to move");
   }, []);
+
+  useEffect(() => {
+    if (orientation === "black") {
+      makeMove();
+    }
+    setPositionsEvaluated(0);
+  }, [orientation]);
 
   const onDrop = ({ sourceSquare, targetSquare }) => {
     // see if the move is legal
@@ -53,10 +62,10 @@ export default function Home() {
       setGameState("Black wins");
       console.log(game.pgn());
     }
-    setGameState("White to move");
   };
 
   const makeMove = () => {
+    setPositionsEvaluated(0);
     game.move(rootnegamax());
     setPosition(game.fen());
   };
@@ -175,60 +184,10 @@ export default function Home() {
     return game.turn() === "w" ? total : -total;
   };
 
-  const minimaxRoot = (game, depth) => {
-    // checking for black - minimizing player
-    const minUtility = Infinity;
-    let bestMove = null;
-
-    const moves = game.moves();
-    for (let i = 0; i < moves.length; i++) {
-      game.move(moves[i]);
-      let score = minimax(game, depth - 1);
-      if (score < minUtility) {
-        minUtility = score;
-        bestMove = moves[i];
-      }
-      game.undo();
-      // console.log(game.pgn());
-      // console.log(rootnegamax());
-      return bestMove;
-    }
-  };
-
-  // white is maximizing player
-  const minimax = (game, depth, white) => {
-    // console.count();
-    if (depth === 0) {
-      return evaluate();
-    }
-
-    const moves = game.moves();
-
-    if (white) {
-      let bestScore = -Infinity;
-      for (let i = 0; i < moves.length; i++) {
-        game.move(moves[i]);
-        let score = minimax(game, depth - 1, false);
-        bestScore = Math.max(bestScore, score);
-        game.undo();
-      }
-      return bestScore;
-    } else {
-      let bestScore = Infinity;
-      for (let i = 0; i < moves.length; i++) {
-        game.move(moves[i]);
-        let score = minimax(game, depth - 1, true);
-        bestScore = Math.min(bestScore, score);
-        game.undo();
-      }
-      return bestScore;
-    }
-  };
-
   // Negamax algorithm root
   var rootnegamax = function () {
-    // var start_time = performance.now()
-    var depth = 2;
+    var start_time = performance.now();
+    var depth = 3;
     var moves = game.moves();
     var max = -Infinity;
     var best_move;
@@ -244,11 +203,15 @@ export default function Home() {
       }
     }
 
-    // console.log('TIME: ' + Math.round(performance.now() - start_time) / 1000)
+    var end_time = performance.now();
+    var time_taken = end_time - start_time;
+
+    setTimeTaken((time_taken / 1000).toFixed(3));
     return best_move;
   };
 
   var negamax = function (depth, alpha, beta) {
+    setPositionsEvaluated((e) => e + 1);
     if (depth == 0) {
       return evaluate();
     }
@@ -343,14 +306,25 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
+          {!orientation && (
+            <div>
+              <button onClick={() => setOrientation("white")}>White</button>
+              <button onClick={() => setOrientation("black")}>Black</button>
+            </div>
+          )}
         </h1>
+        {orientation && (
+          <Chessboard
+            position={position}
+            transitionDuration={100}
+            onDrop={onDrop}
+            orientation={orientation}
+          />
+        )}
 
-        <Chessboard
-          position={position}
-          transitionDuration={100}
-          onDrop={onDrop}
-        />
         <h2>Gamestate: {gameState}</h2>
+        <h2>Positions evaluated: {positionsEvaluated}</h2>
+        <h2>Time taken: {timeTaken}s</h2>
       </main>
 
       <footer className={styles.footer}>
