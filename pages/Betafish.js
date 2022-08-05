@@ -19,7 +19,9 @@ export default function Test() {
   const [gameState, setGameState] = useState("");
   const [orientation, setOrientation] = useState();
   const [positionsEvaluated, setPositionsEvaluated] = useState(0);
+  const [quiescenceNodes, setQuiescenceNodes] = useState(0);
   const [timeTaken, setTimeTaken] = useState(0);
+  const [fenInput, setFenInput] = useState("");
 
   var pawn_value = 100;
   var knight_value = 320;
@@ -34,11 +36,13 @@ export default function Test() {
   }, []);
 
   useEffect(() => {
-    if (orientation === "black") {
-      makeMove();
-    }
     setPositionsEvaluated(0);
   }, [orientation]);
+
+  const setFen = () => {
+    setPosition(fenInput);
+    game.load(fenInput);
+  };
 
   const onDrop = ({ sourceSquare, targetSquare }) => {
     // see if the move is legal
@@ -51,21 +55,13 @@ export default function Test() {
     // illegal move
     if (move === null) return "snapback";
     setPosition(game.fen());
-    setGameState("Black to move");
-    if (game.in_checkmate()) {
-      setGameState("White wins");
-      console.log(game.pgn());
-    }
-    // make random legal move for black
-    window.setTimeout(() => makeMove(), 300);
-    if (game.in_checkmate()) {
-      setGameState("Black wins");
-      console.log(game.pgn());
-    }
+
+    // setTimeout(() => makeMove(), 300);
   };
 
   const makeMove = () => {
     setPositionsEvaluated(0);
+    setQuiescenceNodes(0);
     game.move(rootnegamax());
     setPosition(game.fen());
   };
@@ -184,9 +180,11 @@ export default function Test() {
     return game.turn() === "w" ? total : -total;
   };
 
-  const quiescence = (alpha, beta) => {
-    setPositionsEvaluated((e) => e + 1);
+  const quiescence = (alpha, beta, depth) => {
+    setQuiescenceNodes((e) => e + 1);
     const evaluation = evaluate();
+
+    if (depth == 0) return alpha;
 
     if (evaluation >= beta) {
       return beta;
@@ -199,7 +197,7 @@ export default function Test() {
     for (var i = 0; i < movesWithTakes.length; i++) {
       game.move(movesWithTakes[i]);
 
-      var score = -quiescence(-beta, -alpha);
+      var score = -quiescence(-beta, -alpha, depth - 1);
       game.undo();
 
       if (score >= beta) return beta;
@@ -209,11 +207,65 @@ export default function Test() {
     return alpha;
   };
 
+  const getOrderedMoves = () => {
+    const moves = game.moves({ verbose: true });
+
+    const calculatedMoves = []; // [{ move: "a3", value: 2 }]
+    // how data looks
+    // { color: 'w', from: 'a2', to: 'a3',
+    //   flags: 'n', piece: 'p', san 'a3'
+    //   # a captured: key is included when the move is a capture
+    //   # a promotion: key is included when the move is a promotion
+    // },
+
+    // relevant flags = p (promotion), c (capture), n (normal)
+    // we should return sorted move list
+    for (const i = 0; i < moves.length; i++) {
+      calculatedMoves.push(evaluateMove(moves[i]));
+    }
+    // sort by value
+    const sortedMoves = calculatedMoves
+      .sort((a, b) => b.value - a.value)
+      .map((move) => move.move);
+
+    return sortedMoves;
+  };
+
+  const evaluateMove = ({ piece, captured, promotion, flags, san }) => {
+    const takeValues = {
+      p: 10,
+      n: 9,
+      b: 8,
+      r: 7,
+      q: 6,
+      k: 5,
+    };
+    // promotion gives highest value
+    if (flags?.includes("p")) return { move: san, value: 11 };
+
+    // next we look at captures
+    if (flags?.includes("c"))
+      return { move: san, value: takeValues[piece] - takeValues[captured] };
+
+    // no captures, default to -99
+    return { move: san, value: -99 };
+  };
+
+  const nullMove = () => {
+    const currentFen = game.fen().split(" ");
+    const currentColor = game.turn();
+    const newColor = currentColor == "w" ? "b" : "w";
+    let newFen = currentFen;
+    newFen[1] = newColor;
+    game.load(newFen.join(" "));
+  };
+
   // Negamax algorithm root
   var rootnegamax = function () {
     var start_time = performance.now();
-    var depth = 1;
+    var depth = 3;
     var moves = game.moves();
+    // const moves = getOrderedMoves();
     var max = -Infinity;
     var best_move;
 
@@ -239,9 +291,19 @@ export default function Test() {
     setPositionsEvaluated((e) => e + 1);
     if (depth == 0) {
       // return evaluate();
-      return quiescence(alpha, beta);
+      return quiescence(alpha, beta, 2);
     }
+
+    //null move pruning
+    // if (depth > 1) {
+    //   nullMove();
+    //   var null_move_score = -negamax(depth - 1, -beta, -beta + 1);
+    //   nullMove();
+    //   if (null_move_score >= beta) return beta;
+    // }
+
     var moves = game.moves();
+    // const moves = getOrderedMoves();
     var l = moves.length;
     for (var i = 0; i < l; i++) {
       game.move(moves[i]);
@@ -328,19 +390,32 @@ export default function Test() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
         <Chessboard
           position={position}
           transitionDuration={100}
           onDrop={onDrop}
         />
 
-        <h2>Gamestate: {gameState}</h2>
-        <h2>Positions evaluated: {positionsEvaluated}</h2>
-        <h2>Time taken: {timeTaken}s</h2>
+        <h5>Gamestate: {gameState}</h5>
+        <h5>Positions evaluated: {positionsEvaluated}</h5>
+        <h5>Quiescence nodes: {quiescenceNodes}</h5>
+        <h5>Time taken: {timeTaken}s</h5>
         <button onClick={getPgn}>print pgn</button>
+        <button onClick={() => console.log(rootnegamax())}>get move</button>
+        <button onClick={makeMove}>make move</button>
+        <input
+          type={"text"}
+          onChange={(e) => setFenInput(e.target.value)}
+        ></input>
+        <button onClick={setFen}>set fen</button>
+        <button onClick={() => console.log(game.fen())}>print fen</button>
+        <button onClick={() => nullMove()}>null move</button>
+        <button onClick={() => console.log(game.moves({ verbose: true }))}>
+          verbose move
+        </button>
+        <button onClick={() => console.log(getOrderedMoves())}>
+          sorted moves
+        </button>
       </main>
     </div>
   );
