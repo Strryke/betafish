@@ -303,15 +303,27 @@ function PCEINDEX(pce, pceNum) {
   return pce * 10 + pceNum;
 }
 
+var Kings = [PIECES.wK, PIECES.bK];
+
+var CastlePerm = [
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 13, 15, 15, 15, 12, 15, 15, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 7, 15, 15, 15, 3,
+  15, 15, 11, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15,
+];
+
 /*	
-0000 0000 0000 0000 0000 0111 1111 -> From 0x7F
-0000 0000 0000 0011 1111 1000 0000 -> To >> 7, 0x7F
-0000 0000 0011 1100 0000 0000 0000 -> Captured >> 14, 0xF
-0000 0000 0100 0000 0000 0000 0000 -> EP 0x40000
-0000 0000 1000 0000 0000 0000 0000 -> Pawn Start 0x80000
-0000 1111 0000 0000 0000 0000 0000 -> Promoted Piece >> 20, 0xF
-0001 0000 0000 0000 0000 0000 0000 -> Castle 0x1000000
-*/
+  0000 0000 0000 0000 0000 0111 1111 -> From 0x7F
+  0000 0000 0000 0011 1111 1000 0000 -> To >> 7, 0x7F
+  0000 0000 0011 1100 0000 0000 0000 -> Captured >> 14, 0xF
+  0000 0000 0100 0000 0000 0000 0000 -> EP 0x40000
+  0000 0000 1000 0000 0000 0000 0000 -> Pawn Start 0x80000
+  0000 1111 0000 0000 0000 0000 0000 -> Promoted Piece >> 20, 0xF
+  0001 0000 0000 0000 0000 0000 0000 -> Castle 0x1000000
+  */
 
 function FROMSQ(m) {
   return m & 0x7f;
@@ -338,4 +350,18 @@ var NOMOVE = 0;
 function SQOFFBOARD(sq) {
   if (FilesBrd[sq] == SQUARES.OFFBOARD) return BOOL.TRUE;
   return BOOL.FALSE;
+}
+
+function HASH_PCE(pce, sq) {
+  GameBoard.posKey ^= PieceKeys[pce * 120 + sq];
+}
+
+function HASH_CA() {
+  GameBoard.posKey ^= CastleKeys[GameBoard.castlePerm];
+}
+function HASH_SIDE() {
+  GameBoard.posKey ^= SideKey;
+}
+function HASH_EP() {
+  GameBoard.posKey ^= PieceKeys[GameBoard.enPas];
 }
