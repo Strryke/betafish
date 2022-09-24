@@ -75,6 +75,13 @@ function InitBoardVars() {
       posKey: 0,
     });
   }
+
+  for (index = 0; index < PVENTRIES; ++index) {
+    GameBoard.PvTable.push({
+      move: NOMOVE,
+      posKey: 0,
+    });
+  }
 }
 
 function init() {
@@ -83,4 +90,5 @@ function init() {
   InitHashKeys();
   InitSq120To64();
   InitBoardVars();
+  InitMvvLva();
 }

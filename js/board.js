@@ -19,6 +19,10 @@ GameBoard.posKey = 0;
 GameBoard.moveList = new Array(MAXDEPTH * MAXPOSITIONMOVES);
 GameBoard.moveScores = new Array(MAXDEPTH * MAXPOSITIONMOVES);
 GameBoard.moveListStart = new Array(MAXDEPTH);
+GameBoard.PvTable = [];
+GameBoard.PvArray = new Array(MAXDEPTH);
+GameBoard.searchHistory = new Array(14 * BRD_SQ_NUM);
+GameBoard.searchKillers = new Array(3 * MAXDEPTH);
 
 function CheckBoard() {
   var t_pceNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -169,8 +173,6 @@ function UpdateListsMaterial() {
       GameBoard.pceNum[piece]++;
     }
   }
-
-  PrintPieceLists();
 }
 
 function ResetBoard() {
@@ -207,76 +209,54 @@ function ParseFen(fen) {
   var sq120 = 0;
   var fenCnt = 0; // fen[fenCnt]
 
-  while (rank >= RANKS.RANK_1 && fenCnt < fen.length) {
-    count = 1;
-    switch (fen[fenCnt]) {
-      case "p":
-        piece = PIECES.bP;
-        break;
-      case "r":
-        piece = PIECES.bR;
-        break;
-      case "n":
-        piece = PIECES.bN;
-        break;
-      case "b":
-        piece = PIECES.bB;
-        break;
-      case "k":
-        piece = PIECES.bK;
-        break;
-      case "q":
-        piece = PIECES.bQ;
-        break;
-      case "P":
-        piece = PIECES.wP;
-        break;
-      case "R":
-        piece = PIECES.wR;
-        break;
-      case "N":
-        piece = PIECES.wN;
-        break;
-      case "B":
-        piece = PIECES.wB;
-        break;
-      case "K":
-        piece = PIECES.wK;
-        break;
-      case "Q":
-        piece = PIECES.wQ;
-        break;
+  // prettier-ignore
+  while ((rank >= RANKS.RANK_1) && fenCnt < fen.length) {
+	    count = 1;
+		switch (fen[fenCnt]) {
+			case 'p': piece = PIECES.bP; break;
+            case 'r': piece = PIECES.bR; break;
+            case 'n': piece = PIECES.bN; break;
+            case 'b': piece = PIECES.bB; break;
+            case 'k': piece = PIECES.bK; break;
+            case 'q': piece = PIECES.bQ; break;
+            case 'P': piece = PIECES.wP; break;
+            case 'R': piece = PIECES.wR; break;
+            case 'N': piece = PIECES.wN; break;
+            case 'B': piece = PIECES.wB; break;
+            case 'K': piece = PIECES.wK; break;
+            case 'Q': piece = PIECES.wQ; break;
 
-      case "1":
-      case "2":
-      case "3":
-      case "4":
-      case "5":
-      case "6":
-      case "7":
-      case "8":
-        piece = PIECES.EMPTY;
-        count = fen[fenCnt].charCodeAt() - "0".charCodeAt();
-        break;
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+                piece = PIECES.EMPTY;
+                count = fen[fenCnt].charCodeAt() - '0'.charCodeAt();
+                break;
+            
+            case '/':
+            case ' ':
+                rank--;
+                file = FILES.FILE_A;
+                fenCnt++;
+                continue;  
+            default:
+                console.log("FEN error");
+                return;
 
-      case "/":
-      case " ":
-        rank--;
-        file = FILES.FILE_A;
-        fenCnt++;
-        continue;
-      default:
-        console.log("FEN error");
-        return;
-    }
-
-    for (i = 0; i < count; i++) {
-      sq120 = FR2SQ(file, rank);
-      GameBoard.pieces[sq120] = piece;
-      file++;
-    }
-    fenCnt++;
-  } // while loop end
+		}
+		
+		for (i = 0; i < count; i++) {	
+			sq120 = FR2SQ(file,rank);            
+            GameBoard.pieces[sq120] = piece;
+			file++;
+        }
+		fenCnt++;
+	} // while loop end
 
   //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
   GameBoard.side = fen[fenCnt] == "w" ? COLOURS.WHITE : COLOURS.BLACK;
@@ -317,7 +297,6 @@ function ParseFen(fen) {
 
   GameBoard.posKey = GeneratePosKey();
   UpdateListsMaterial();
-  PrintSqAttacked();
 }
 
 function PrintSqAttacked() {
