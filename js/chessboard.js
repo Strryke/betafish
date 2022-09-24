@@ -28,16 +28,20 @@ function makeAIMove() {
   if (GameBoard.GameOver) {
     return;
   }
+  color = GameBoard.side == COLOURS.WHITE ? "white" : "black";
+  removeHighlights(color);
+
   // get best move
   let bestMove = getBestMove();
-  MakeMove(bestMove);
 
   // highlight AI's move
   fromSQ = PrMove(bestMove).slice(0, 2);
   toSQ = PrMove(bestMove).slice(2, 4);
-  removeHighlights("black");
-  $board.find(".square-" + fromSQ).addClass("highlight-black");
-  squareToHighlight = toSQ;
+
+  $board.find(".square-" + fromSQ).addClass(`highlight-${color}`);
+  $board.find(".square-" + toSQ).addClass(`highlight-${color}`);
+
+  MakeMove(bestMove);
 
   board.position(GenerateFEN());
   CheckStatus();

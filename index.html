@@ -4,36 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="" />
-    <meta
-      name="author"
-      content="Mark Otto, Jacob Thornton, and Bootstrap contributors"
-    />
-    <meta name="generator" content="Hugo 0.84.0" />
-    <title>Sticky Footer Template · Bootstrap v5.0</title>
-
-    <link
-      rel="canonical"
-      href="https://getbootstrap.com/docs/5.0/examples/sticky-footer/"
-    />
+    <title>Betafish.js | Chess AI</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-    </style>
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <!-- Custom styles for this template -->
     <link href="sticky-footer.css" rel="stylesheet" />
@@ -44,72 +18,109 @@
     <!-- Begin page content -->
     <main class="flex-shrink-0">
       <div class="container">
-        <h1 class="mt-5">Sticky footer</h1>
+        <h1 class="mt-5">Betafish.js</h1>
 
+        <p class="lead">Status: <span id="GameStatus"></span></p>
+        <div class="input-group mb-2">
+          <input type="text" class="form-control fw-light" id="FENField" />
+          <button
+            class="btn btn-outline-secondary"
+            onclick="copyFEN()"
+            type="button"
+          >
+            Copy FEN
+          </button>
+          <button class="btn btn-outline-secondary" id="SetFen" type="button">
+            Set Fen
+          </button>
+        </div>
         <div id="board1" style="width: 100%"></div>
 
         <div>
-          <div class="d-flex my-2">
+          <div class="my-2 d-flex">
             <button
               type="button"
-              class="btn btn-outline-secondary"
+              class="btn btn-outline-danger me-2"
               onclick="resetBoard()"
             >
               Reset
             </button>
-            <button type="button" class="btn btn-outline-secondary">
+            <button type="button" class="btn btn-outline-secondary me-2">
               Take Back
             </button>
-            <div class="input-group">
-              <label class="input-group-text" for="inputGroupSelect01"
-                >Thinking Time</label
-              >
-              <select
-                class="form-select"
-                styles="width: 100px"
-                id="thinkingTime"
-              >
-                <option selected value="1">1s</option>
-                <option value="3">3s</option>
-                <option value="5">5s</option>
-                <option value="10">10s</option>
-              </select>
+            <button
+              type="button"
+              class="btn btn-outline-primary me-4"
+              onclick="makeAIMove()"
+            >
+              Get AI Move
+            </button>
+            <div class="flex-grow-1">
+              <div class="input-group">
+                <label class="input-group-text" for="inputGroupSelect01"
+                  >Thinking time:</label
+                >
+                <select class="form-select" id="thinkingTime">
+                  <option selected value="1">1</option>
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text">s</span>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="input-group">
-            <input type="text" class="form-control fw-light" id="FENField" />
-            <button
-              class="btn btn-outline-secondary"
-              onclick="copyFEN()"
-              type="button"
+        </div>
+
+        <div class="accordion mt-2" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+              >
+                View Movegen Data for nerds
+              </button>
+            </h2>
+            <div
+              id="collapseOne"
+              class="accordion-collapse collapse show"
+              aria-labelledby="headingOne"
+              data-bs-parent="#accordionExample"
             >
-              Copy FEN
-            </button>
-            <button class="btn btn-outline-secondary" id="SetFen" type="button">
-              Set Fen
-            </button>
+              <div class="accordion-body">
+                <strong>This is the first item's accordion body.</strong> It is
+                shown by default, until the collapse plugin adds the appropriate
+                classes that we use to style each element. These classes control
+                the overall appearance, as well as the showing and hiding via
+                CSS transitions. You can modify any of this with custom CSS or
+                overriding our default variables. It's also worth noting that
+                just about any HTML can go within the
+                <code>.accordion-body</code>, though the transition does limit
+                overflow.
+              </div>
+            </div>
           </div>
         </div>
-        <p class="lead">
-          <span id="GameStatus"></span>
-        </p>
-        <p>
-          Use
-          <a href="../examples/sticky-footer-navbar/"
-            >the sticky footer with a fixed navbar</a
-          >
-          if need be, too.
-        </p>
       </div>
     </main>
 
     <footer class="footer mt-auto py-3 bg-light">
-      <div class="container">
-        <span class="text-muted">Place sticky footer content here.</span>
+      <div class="container text-center">
+        <span class="text-muted"
+          >Made with ❤️ by Gavin. <br />
+          <a href="https://github.com/Strryke/betafish">View Repo</a></span
+        >
       </div>
     </footer>
   </body>
-
+  <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/jquery-1.10.1.min.js"></script>
   <script src="js/defs.js"></script>
   <script src="js/io.js"></script>
