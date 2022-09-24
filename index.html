@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>JSChess</title>
     <link href="styles.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="chessboard-1.0.0.min.css" type="text/css" />
     <script type="text/javascript">
       if (!window.console) console = { log: function () {} };
     </script>
@@ -17,6 +18,8 @@
       <input type="text" id="fenIn" />
       <button type="button" id="SetFen">Set Position</button>
     </div>
+    <div id="board1" style="width: 400px"></div>
+    <div id="GameStatus">Status</div>
 
     <script src="js/jquery-1.10.1.min.js"></script>
     <script src="js/defs.js"></script>
@@ -29,6 +32,8 @@
     <script src="js/search.js"></script>
     <script src="js/perft.js"></script>
     <script src="js/gui.js"></script>
+    <script src="chessboard-1.0.0.min.js"></script>
+    <script src="js/chessboard.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

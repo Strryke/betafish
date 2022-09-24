@@ -2,6 +2,29 @@ function PrSq(sq) {
   return FileChar[FilesBrd[sq]] + RankChar[RanksBrd[sq]];
 }
 
+function OppositePrSq(move) {
+  // takes in a move and returns the reverse of prsq
+  // b1 > 22
+  // c3 > 43
+  // e2 > 35
+  // e3 > 45
+
+  const file = {
+    a: 1,
+    b: 2,
+    c: 3,
+    d: 4,
+    e: 5,
+    f: 6,
+    g: 7,
+    h: 8,
+  };
+
+  let to120 = file[move[0]] + 10 * (parseInt(move[1]) + 1);
+
+  return to120;
+}
+
 function PrMove(move) {
   var MvStr;
 
@@ -16,16 +39,16 @@ function PrMove(move) {
 
   if (promoted != PIECES.EMPTY) {
     var pchar = "q";
-    if (PieceKnight[promoted] == BOOL.TRUE) {
+    if (PieceKnight[promoted] == true) {
       pchar = "n";
     } else if (
-      PieceRookQueen[promoted] == BOOL.TRUE &&
-      PieceBishopQueen[promoted] == BOOL.FALSE
+      PieceRookQueen[promoted] == true &&
+      PieceBishopQueen[promoted] == false
     ) {
       pchar = "r";
     } else if (
-      PieceRookQueen[promoted] == BOOL.FALSE &&
-      PieceBishopQueen[promoted] == BOOL.TRUE
+      PieceRookQueen[promoted] == false &&
+      PieceBishopQueen[promoted] == true
     ) {
       pchar = "b";
     }
@@ -34,11 +57,12 @@ function PrMove(move) {
   return MvStr;
 }
 
-function PrintMoveList() {
+function getMoveList() {
+  GenerateMoves();
   var index;
   var move;
   var num = 1;
-  console.log("MoveList:");
+  moves = [];
 
   for (
     index = GameBoard.moveListStart[GameBoard.ply];
@@ -46,17 +70,9 @@ function PrintMoveList() {
     ++index
   ) {
     move = GameBoard.moveList[index];
-    console.log(
-      "IMove:" +
-        num +
-        ":(" +
-        index +
-        "):" +
-        PrMove(move) +
-        " Score:" +
-        GameBoard.moveScores[index]
-    );
+    moves.push(PrMove(move).slice(0, 4));
     num++;
   }
-  console.log("End MoveList");
+  console.log(moves);
+  return moves;
 }

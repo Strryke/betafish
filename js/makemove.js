@@ -107,7 +107,7 @@ function MakeMove(move) {
   GameBoard.hisPly++;
   GameBoard.ply++;
 
-  if (PiecePawn[GameBoard.pieces[from]] == BOOL.TRUE) {
+  if (PiecePawn[GameBoard.pieces[from]] == true) {
     GameBoard.fiftyMove = 0;
     if ((move & MFLAGPS) != 0) {
       if (side == COLOURS.WHITE) {
@@ -132,10 +132,10 @@ function MakeMove(move) {
 
   if (SqAttacked(GameBoard.pList[PCEINDEX(Kings[side], 0)], GameBoard.side)) {
     TakeMove();
-    return BOOL.FALSE;
+    return false;
   }
 
-  return BOOL.TRUE;
+  return true;
 }
 
 function TakeMove() {
@@ -198,4 +198,52 @@ function TakeMove() {
       PieceCol[PROMOTED(move)] == COLOURS.WHITE ? PIECES.wP : PIECES.bP
     );
   }
+}
+
+function CheckValidMove(from, to) {
+  console.log(from, to);
+  let move = `${from}${to}`;
+  let moveList = getMoveList();
+  console.log(moveList);
+
+  return moveList.includes(move);
+}
+
+function ThreeFoldRep() {
+  var i = 0,
+    r = 0;
+
+  for (i = 0; i < GameBoard.hisPly; ++i) {
+    if (GameBoard.history[i].posKey == GameBoard.posKey) {
+      r++;
+    }
+  }
+  return r;
+}
+
+function DrawMaterial() {
+  if (GameBoard.pceNum[PIECES.wP] != 0 || GameBoard.pceNum[PIECES.bP] != 0)
+    return false;
+  if (
+    GameBoard.pceNum[PIECES.wQ] != 0 ||
+    GameBoard.pceNum[PIECES.bQ] != 0 ||
+    GameBoard.pceNum[PIECES.wR] != 0 ||
+    GameBoard.pceNum[PIECES.bR] != 0
+  )
+    return false;
+  if (GameBoard.pceNum[PIECES.wB] > 1 || GameBoard.pceNum[PIECES.bB] > 1) {
+    return false;
+  }
+  if (GameBoard.pceNum[PIECES.wN] > 1 || GameBoard.pceNum[PIECES.bN] > 1) {
+    return false;
+  }
+
+  if (GameBoard.pceNum[PIECES.wN] != 0 && GameBoard.pceNum[PIECES.wB] != 0) {
+    return false;
+  }
+  if (GameBoard.pceNum[PIECES.bN] != 0 && GameBoard.pceNum[PIECES.bB] != 0) {
+    return false;
+  }
+
+  return true;
 }

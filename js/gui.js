@@ -3,4 +3,5 @@ $("#SetFen").click(function () {
   ParseFen(fenStr);
   PrintBoard();
   SearchPosition();
+  board.position(fenStr);
 });
