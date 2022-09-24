@@ -4,6 +4,7 @@ $(function () {
   PrintBoard();
   // PrintMoveList();
   GenerateFEN();
+  CheckStatus();
 });
 
 function InitFilesRanksBrd() {

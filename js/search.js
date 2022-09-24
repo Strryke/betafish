@@ -47,7 +47,7 @@ function ClearPvTable() {
 
 function CheckUp() {
   if ($.now() - SearchController.start > SearchController.time) {
-    SearchController.stop == true;
+    SearchController.stop = true;
   }
 }
 
@@ -283,12 +283,14 @@ function SearchPosition() {
 
   for (
     currentDepth = 1;
-    currentDepth <= /*SearchController.depth*/ 6;
+    currentDepth <= SearchController.depth;
     ++currentDepth
   ) {
     bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 
-    if (SearchController.stop == true) {
+    console.log(SearchController.stop);
+
+    if (SearchController.stop) {
       break;
     }
 
@@ -324,10 +326,9 @@ function SearchPosition() {
 function getBestMove() {
   SearchController.depth = MAXDEPTH;
   var t = $.now();
-  var tt = 1;
+  var tt = document.getElementById("thinkingTime").value;
 
   SearchController.time = parseInt(tt) * 1000;
   SearchPosition();
-  console.log(SearchController.best);
   return SearchController.best;
 }

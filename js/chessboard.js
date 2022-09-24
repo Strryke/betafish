@@ -1,6 +1,13 @@
 var $status = $("#status");
-var $fen = $("#fen");
+var $fen = $("#FENField");
 var $pgn = $("#pgn");
+var squareToHighlight = null;
+var squareClass = "square-55d63";
+var $board = $("#board1");
+
+function removeHighlights(color) {
+  $board.find("." + squareClass).removeClass("highlight-" + color);
+}
 
 function onDragStart(source, piece, position, orientation) {
   // do not pick up pieces if the game is over
@@ -24,6 +31,14 @@ function makeAIMove() {
   // get best move
   let bestMove = getBestMove();
   MakeMove(bestMove);
+
+  // highlight AI's move
+  fromSQ = PrMove(bestMove).slice(0, 2);
+  toSQ = PrMove(bestMove).slice(2, 4);
+  removeHighlights("black");
+  $board.find(".square-" + fromSQ).addClass("highlight-black");
+  squareToHighlight = toSQ;
+
   board.position(GenerateFEN());
   CheckStatus();
 }
@@ -43,9 +58,18 @@ function onDrop(source, target) {
     PrintBoard();
     GenerateFEN();
 
+    // highlight white's move
+    removeHighlights("white");
+    $board.find(".square-" + source).addClass("highlight-white");
+    $board.find(".square-" + target).addClass("highlight-white");
+
     // get AI move
     window.setTimeout(makeAIMove, 250);
   } else return "snapback";
+}
+
+function onMoveEnd() {
+  $board.find(".square-" + squareToHighlight).addClass("highlight-black");
 }
 
 // update the board position after the piece snap
@@ -60,18 +84,26 @@ var config = {
   position: "start",
   onDragStart: onDragStart,
   onDrop: onDrop,
+  onMoveEnd: onMoveEnd,
   onSnapEnd: onSnapEnd,
 };
+
 board = Chessboard("board1", config);
 
 function CheckResult() {
+  // update FEN
+  $fen.val(GenerateFEN());
+
+  let SideToMove = GameBoard.side == COLOURS.WHITE ? "White" : "Black";
+  $("#GameStatus").text(`${SideToMove} to move`);
+
   if (GameBoard.fiftyMove >= 100) {
     $("#GameStatus").text("Game drawn by fifty move rule");
     return true;
   }
 
   if (ThreeFoldRep() >= 2) {
-    $("#GameStatus").text("Game drawn by 3-fold repitition");
+    $("#GameStatus").text("Game drawn by 3-fold repetition");
     return true;
   }
 
@@ -105,7 +137,7 @@ function CheckResult() {
 
   if (found != 0) {
     if (InCheck) {
-      $("#GameStatus").text("CHECK");
+      $("#GameStatus").text("Check");
     }
     return false;
   }
@@ -129,6 +161,5 @@ function CheckStatus() {
     GameBoard.GameOver = true;
   } else {
     GameBoard.GameOver = false;
-    $("#GameStatus").text("");
   }
 }

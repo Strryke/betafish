@@ -1,9 +1,6 @@
-#FenInDiv {
-  position: relative;
-  left: 60px;
+.highlight-white {
+  box-shadow: inset 0 0 3px 3px yellow;
 }
-
-#fenIn {
-  width: 480px;
-  left: 60px;
+.highlight-black {
+  box-shadow: inset 0 0 3px 3px blue;
 }
