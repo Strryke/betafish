@@ -1,7 +1,14 @@
+// prettier-ignore
+{
 var PawnTable = [
-  0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 0, -10, -10, 0, 10, 10, 5, 0, 0, 5, 5, 0, 0,
-  5, 0, 0, 10, 20, 20, 10, 0, 0, 5, 5, 5, 10, 10, 5, 5, 5, 10, 10, 10, 20, 20,
-  10, 10, 10, 20, 20, 20, 30, 30, 20, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0,
+    0,   0,   0,   0,   0,   0,   0,   0, 
+   10,  10,   0, -10, -10,   0,  10,  10, 
+    5,   0,   0,   5,   5,   0,   0,   5, 
+    0,   0,  10,  20,  20,  10,   0,   0, 
+    5,   5,   5,  10,  10,   5,   5,   5, 
+    10, 10,  10,  20,  20,  10,  10,  10, 
+    20, 20,  20,  30,  30,  20,  20,  20, 
+    0,   0,   0,   0,   0,   0,   0,   0,
 ];
 
 var KnightTable = [
@@ -22,7 +29,21 @@ var RookTable = [
   25, 25, 25, 25, 25, 25, 25, 25, 0, 0, 5, 10, 10, 5, 0, 0,
 ];
 
-var BishopPair = 40;
+var KingTable = [
+  20, 30, 10, 0, 0, 10, 30, 20, 20, 20, 0, 0, 0, 0, 20, 20, -10, -20, -20, -20,
+  -20, -20, -20, -10, -20, -30, -30, -40, -40, -30, -30, -20, -30, -40, -40,
+  -50,
+];
+
+var EndKingTable = [
+  -50, -30, -30, -30, -30, -30, -30, -50, -30, -30, 0, 0, 0, 0, -30, -30, -30,
+  -10, 20, 30, 30, 20, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10,
+  30, 40, 40, 30, -10, -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -30, 0, 0,
+  0, 0, -30, -30, -50, -30, -30, -30, -30, -30, -30, -50,
+];
+}
+
+const BishopPair = 40;
 
 function EvalPosition() {
   var score =
@@ -90,6 +111,23 @@ function EvalPosition() {
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
     sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
     score -= RookTable[MIRROR64(SQ64(sq))];
+  }
+
+  pce = PIECES.wK;
+  for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+    console.log(sq);
+    score += SearchController.endgame
+      ? EndKingTable[SQ64(sq)]
+      : KingTable[SQ64(sq)];
+  }
+
+  pce = PIECES.bK;
+  for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+    score -= SearchController.endgame
+      ? EndKingTable[MIRROR64(SQ64(sq))]
+      : KingTable[MIRROR64(SQ64(sq))];
   }
 
   if (GameBoard.pceNum[PIECES.wB] >= 2) {

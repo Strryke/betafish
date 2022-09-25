@@ -31,7 +31,7 @@
             Copy FEN
           </button>
           <button class="btn btn-outline-secondary" id="SetFen" type="button">
-            Set Fen
+            Set FEN
           </button>
         </div>
         <div id="board1" style="width: 100%"></div>
@@ -50,10 +50,17 @@
             </button>
             <button
               type="button"
-              class="btn btn-outline-primary me-4"
+              class="btn btn-outline-primary me-2"
               onclick="makeAIMove()"
             >
               Get AI Move
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary me-4"
+              onclick="flipBoard()"
+            >
+              Flip Board
             </button>
             <div class="flex-grow-1">
               <div class="input-group">
@@ -115,7 +122,7 @@
       <div class="container text-center">
         <span class="text-muted"
           >Made with ❤️ by Gavin. <br />
-          <a href="https://github.com/Strryke/betafish">View Repo</a></span
+          <a href="https://github.com/Strryke/betafish">View source</a></span
         >
       </div>
     </footer>

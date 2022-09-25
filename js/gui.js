@@ -35,3 +35,7 @@ function resetBoard() {
     removeHighlights("black");
   }, 500);
 }
+
+function flipBoard() {
+  board.flip();
+}

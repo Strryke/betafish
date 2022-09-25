@@ -9,6 +9,7 @@ SearchController.start;
 SearchController.stop;
 SearchController.best;
 SearchController.thinking;
+SearchController.endgame;
 
 function PickNextMove(MoveNum) {
   var index = 0;
@@ -251,9 +252,19 @@ function AlphaBeta(alpha, beta, depth) {
   return alpha;
 }
 
+function CheckEndgame() {
+  totalMaterial =
+    GameBoard.material[COLOURS.WHITE] + GameBoard.material[COLOURS.BLACK];
+
+  if (totalMaterial < 105000) {
+    SearchController.endgame = true;
+  } else {
+    SearchController.endgame = false;
+  }
+}
+
 function ClearForSearch() {
   var index = 0;
-  var index2 = 0;
 
   for (index = 0; index < 14 * BRD_SQ_NUM; ++index) {
     GameBoard.searchHistory[index] = 0;
@@ -264,6 +275,8 @@ function ClearForSearch() {
   }
 
   ClearPvTable();
+  CheckEndgame();
+
   GameBoard.ply = 0;
   SearchController.nodes = 0;
   SearchController.fh = 0;
@@ -287,8 +300,6 @@ function SearchPosition() {
     ++currentDepth
   ) {
     bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
-
-    console.log(SearchController.stop);
 
     if (SearchController.stop) {
       break;
