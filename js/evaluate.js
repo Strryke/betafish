@@ -116,7 +116,6 @@ function EvalPosition() {
   pce = PIECES.wK;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
     sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    console.log(sq);
     score += SearchController.endgame
       ? EndKingTable[SQ64(sq)]
       : KingTable[SQ64(sq)];

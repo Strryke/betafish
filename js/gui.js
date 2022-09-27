@@ -27,15 +27,21 @@ function copyFEN() {
 }
 
 function resetBoard() {
-  ParseFen(START_FEN);
-  board.position(START_FEN);
+  if (window.confirm("Are you sure you want to reset the board?")) {
+    ParseFen(START_FEN);
+    board.position(START_FEN);
 
-  setTimeout(() => {
-    removeHighlights("white");
-    removeHighlights("black");
-  }, 500);
+    setTimeout(() => {
+      removeHighlights("white");
+      removeHighlights("black");
+    }, 500);
+  }
 }
 
 function flipBoard() {
   board.flip();
+}
+
+function takeBack() {
+  alert("Just like in life, there are no takebacks.");
 }
