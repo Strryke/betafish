@@ -105,29 +105,61 @@
   </body>
   <script type="module">
     import {
-      Chessboard,
       INPUT_EVENT_TYPE,
+      COLOR,
+      Chessboard,
+      MARKER_TYPE,
     } from "./cm-chessboard/Chessboard.js";
     import { FEN } from "./cm-chessboard/model/Position.js";
 
     window.board = new Chessboard(document.getElementById("board"), {
-      position: FEN.start,
+      position: game.getFEN(),
       sprite: { url: "../assets/images/chessboard-sprite-staunty.svg" },
     });
 
     window.board.enableMoveInput(inputHandler);
+
     function inputHandler(event) {
-      switch (event.type) {
-        case INPUT_EVENT_TYPE.moveInputStarted:
-          console.log(`moveInputStarted: ${event.square}`);
-          return true;
-        case INPUT_EVENT_TYPE.validateMoveInput:
-          console.log(
-            `validateMoveInput: ${event.squareFrom}-${event.squareTo}`
-          );
-          return true;
-        case INPUT_EVENT_TYPE.moveInputCanceled:
-          console.log(`moveInputCanceled`);
+      // console.log("event", event);
+      event.chessboard.removeMarkers(MARKER_TYPE.dot);
+      if (event.type === INPUT_EVENT_TYPE.moveInputStarted) {
+        const moves = game.getMovesAtSquare(event.square);
+        for (const move of moves) {
+          // draw dots on possible squares
+          event.chessboard.addMarker(MARKER_TYPE.dot, move);
+        }
+        return moves.length > 0;
+      } else if (event.type === INPUT_EVENT_TYPE.validateMoveInput) {
+        // const move = { from: event.squareFrom, to: event.squareTo };
+        // const result = chess.move(move);
+        const result = game.move(event.squareFrom, event.squareTo);
+        console.log(result);
+        if (result) {
+          event.chessboard.disableMoveInput();
+          this.chessboard.state.moveInputProcess.then(() => {
+            // wait for the move input process has finished
+            this.chessboard.setPosition(game.getFEN(), true).then(() => {
+              event.chessboard.enableMoveInput(inputHandler);
+              // update position, maybe castled and wait for animation has finished
+              // const possibleMoves = chess.moves({ verbose: true });
+              // if (possibleMoves.length > 0) {
+              //   const randomIndex = Math.floor(
+              //     Math.random() * possibleMoves.length
+              //   );
+              //   const randomMove = possibleMoves[randomIndex];
+              //   setTimeout(() => {
+              //     // smoother with 500ms delay
+              //     chess.move({ from: randomMove.from, to: randomMove.to });
+              //     event.chessboard.enableMoveInput(inputHandler, COLOR.white);
+              //     event.chessboard.setPosition(chess.fen(), true);
+              //   }, 500);
+              // }
+            });
+          });
+        } else {
+          console.warn("invalid move");
+        }
+        return result;
       }
     }
   </script>
