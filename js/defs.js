@@ -35,7 +35,7 @@ var FileChar = "abcdefgh";
 
 }
 
-function FR2SQ(f, r) {
+function fileRanktoSquare(f, r) {
   return 21 + f + r * 10;
 }
 
@@ -72,7 +72,7 @@ var CastleKeys = new Array(16);
 var Sq120ToSq64 = new Array(BRD_SQ_NUM);
 var Sq64ToSq120 = new Array(64);
 }
-function RAND_32() {
+function getRand32() {
   return (
     (Math.floor(Math.random() * 255 + 1) << 23) |
     (Math.floor(Math.random() * 255 + 1) << 16) |
@@ -153,9 +153,8 @@ var MFLAGPROM = 0xf00000;
 
 var NOMOVE = 0;
 
-function SQOFFBOARD(sq) {
-  if (FilesBrd[sq] == SQUARES.OFFBOARD) return true;
-  return false;
+function isSqOffBoard(sq) {
+  return FilesBrd[sq] == SQUARES.OFFBOARD;
 }
 
 function hashPiece(pce, sq) {

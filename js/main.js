@@ -20,7 +20,7 @@ function InitFilesRanksBrd() {
 
   for (rank = RANKS.RANK_1; rank <= RANKS.RANK_8; ++rank) {
     for (file = FILES.FILE_A; file <= FILES.FILE_H; ++file) {
-      sq = FR2SQ(file, rank);
+      sq = fileRanktoSquare(file, rank);
       FilesBrd[sq] = file;
       RanksBrd[sq] = rank;
     }
@@ -31,13 +31,13 @@ function InitHashKeys() {
   var index = 0;
 
   for (index = 0; index < 14 * 120; ++index) {
-    PieceKeys[index] = RAND_32();
+    PieceKeys[index] = getRand32();
   }
 
-  SideKey = RAND_32();
+  SideKey = getRand32();
 
   for (index = 0; index < 16; ++index) {
-    CastleKeys[index] = RAND_32();
+    CastleKeys[index] = getRand32();
   }
 }
 
@@ -58,7 +58,7 @@ function InitSq120To64() {
 
   for (rank = RANKS.RANK_1; rank <= RANKS.RANK_8; ++rank) {
     for (file = FILES.FILE_A; file <= FILES.FILE_H; ++file) {
-      sq = FR2SQ(file, rank);
+      sq = fileRanktoSquare(file, rank);
       Sq64ToSq120[sq64] = sq;
       Sq120ToSq64[sq] = sq64;
       sq64++;

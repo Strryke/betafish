@@ -25,55 +25,6 @@ GameBoard.searchHistory = new Array(14 * BRD_SQ_NUM);
 GameBoard.searchKillers = new Array(3 * MAXDEPTH);
 GameBoard.GameOver = false;
 
-function CheckBoard() {
-  var t_pceNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  var t_material = [0, 0];
-  var sq64, t_piece, t_pce_num, sq120, colour, pcount;
-
-  for (t_piece = PIECES.wP; t_piece <= PIECES.bK; ++t_piece) {
-    for (t_pce_num = 0; t_pce_num < GameBoard.pceNum[t_piece]; ++t_pce_num) {
-      sq120 = GameBoard.pList[getPieceIndex(t_piece, t_pce_num)];
-      if (GameBoard.pieces[sq120] != t_piece) {
-        console.log("Error Pce Lists");
-        return false;
-      }
-    }
-  }
-
-  for (sq64 = 0; sq64 < 64; ++sq64) {
-    sq120 = sq64to120(sq64);
-    t_piece = GameBoard.pieces[sq120];
-    t_pceNum[t_piece]++;
-    t_material[PieceCol[t_piece]] += PieceVal[t_piece];
-  }
-
-  for (t_piece = PIECES.wP; t_piece <= PIECES.bK; ++t_piece) {
-    if (t_pceNum[t_piece] != GameBoard.pceNum[t_piece]) {
-      console.log("Error t_pceNum");
-      return false;
-    }
-  }
-
-  if (
-    t_material[COLOURS.WHITE] != GameBoard.material[COLOURS.WHITE] ||
-    t_material[COLOURS.BLACK] != GameBoard.material[COLOURS.BLACK]
-  ) {
-    console.log("Error t_material");
-    return false;
-  }
-
-  if (GameBoard.side != COLOURS.WHITE && GameBoard.side != COLOURS.BLACK) {
-    console.log("Error GameBoard.side");
-    return false;
-  }
-
-  if (GeneratePosKey() != GameBoard.posKey) {
-    console.log("Error GameBoard.posKey");
-    return false;
-  }
-  return true;
-}
-
 function PrintBoard() {
   var sq, file, rank, piece;
 
@@ -81,7 +32,7 @@ function PrintBoard() {
   for (rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--) {
     var line = RankChar[rank] + "  ";
     for (file = FILES.FILE_A; file <= FILES.FILE_H; file++) {
-      sq = FR2SQ(file, rank);
+      sq = fileRanktoSquare(file, rank);
       piece = GameBoard.pieces[sq];
       line += " " + PceChar[piece] + " ";
     }
@@ -115,7 +66,7 @@ function GenerateFEN() {
   for (rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--) {
     emptyCount = 0;
     for (file = FILES.FILE_A; file <= FILES.FILE_H; file++) {
-      sq = FR2SQ(file, rank);
+      sq = fileRanktoSquare(file, rank);
       piece = GameBoard.pieces[sq];
       if (piece == PIECES.EMPTY) {
         emptyCount++;
@@ -354,7 +305,7 @@ function ParseFen(fen) {
 		}
 		
 		for (i = 0; i < count; i++) {	
-			sq120 = FR2SQ(file,rank);            
+			sq120 = fileRanktoSquare(file,rank);            
             GameBoard.pieces[sq120] = piece;
 			file++;
         }
@@ -395,7 +346,7 @@ function ParseFen(fen) {
     console.log(
       "fen[fenCnt]:" + fen[fenCnt] + " File:" + file + " Rank:" + rank
     );
-    GameBoard.enPas = FR2SQ(file, rank);
+    GameBoard.enPas = fileRanktoSquare(file, rank);
   }
 
   GameBoard.posKey = GeneratePosKey();
@@ -410,7 +361,7 @@ function PrintSqAttacked() {
   for (rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--) {
     var line = rank + 1 + "  ";
     for (file = FILES.FILE_A; file <= FILES.FILE_H; file++) {
-      sq = FR2SQ(file, rank);
+      sq = fileRanktoSquare(file, rank);
       if (SqAttacked(sq, GameBoard.side ^ 1) == true) piece = "X";
       else piece = "-";
       line += " " + piece + " ";
