@@ -44,7 +44,7 @@ function MOVE(from, to, captured, promoted, flag) {
 function AddCaptureMove(move) {
   GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
   GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] =
-    MvvLvaScores[CAPTURED(move) * 14 + GameBoard.pieces[FROMSQ(move)]] +
+    MvvLvaScores[CAPTURED(move) * 14 + GameBoard.pieces[fromSQ(move)]] +
     1000000;
 }
 
@@ -59,7 +59,7 @@ function AddQuietMove(move) {
   } else {
     GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] =
       GameBoard.searchHistory[
-        GameBoard.pieces[FROMSQ(move)] * BRD_SQ_NUM + TOSQ(move)
+        GameBoard.pieces[fromSQ(move)] * BRD_SQ_NUM + toSQ(move)
       ];
   }
 
@@ -132,7 +132,7 @@ function GenerateMoves() {
     pceType = PIECES.wP;
 
     for (pceNum = 0; pceNum < GameBoard.pceNum[pceType]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pceType, pceNum)];
       if (GameBoard.pieces[sq + 10] == PIECES.EMPTY) {
         AddWhitePawnQuietMove(sq, sq + 10);
         if (
@@ -208,7 +208,7 @@ function GenerateMoves() {
     pceType = PIECES.bP;
 
     for (pceNum = 0; pceNum < GameBoard.pceNum[pceType]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pceType, pceNum)];
       if (GameBoard.pieces[sq - 10] == PIECES.EMPTY) {
         AddBlackPawnQuietMove(sq, sq - 10);
         if (
@@ -286,7 +286,7 @@ function GenerateMoves() {
 
   while (pce != 0) {
     for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
 
       for (index = 0; index < DirNum[pce]; index++) {
         dir = PceDir[pce][index];
@@ -315,7 +315,7 @@ function GenerateMoves() {
 
   while (pce != 0) {
     for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
 
       for (index = 0; index < DirNum[pce]; index++) {
         dir = PceDir[pce][index];
@@ -355,7 +355,7 @@ function GenerateCaptures() {
     pceType = PIECES.wP;
 
     for (pceNum = 0; pceNum < GameBoard.pceNum[pceType]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pceType, pceNum)];
 
       if (
         SQOFFBOARD(sq + 9) == false &&
@@ -389,7 +389,7 @@ function GenerateCaptures() {
     pceType = PIECES.bP;
 
     for (pceNum = 0; pceNum < GameBoard.pceNum[pceType]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pceType, pceNum)];
 
       if (
         SQOFFBOARD(sq - 9) == false &&
@@ -426,7 +426,7 @@ function GenerateCaptures() {
 
   while (pce != 0) {
     for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
 
       for (index = 0; index < DirNum[pce]; index++) {
         dir = PceDir[pce][index];
@@ -453,7 +453,7 @@ function GenerateCaptures() {
 
   while (pce != 0) {
     for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-      sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
 
       for (index = 0; index < DirNum[pce]; index++) {
         dir = PceDir[pce][index];

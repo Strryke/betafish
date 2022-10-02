@@ -3,6 +3,7 @@ $("#SetFen").click(function () {
   ParseFen(fenStr);
   board.position(fenStr);
   CheckStatus();
+  PerftTest(5);
 });
 
 $("#NewGame").click(function () {});

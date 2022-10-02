@@ -28,10 +28,10 @@ function OppositePrSq(move) {
 function PrMove(move) {
   var MvStr;
 
-  var ff = FilesBrd[FROMSQ(move)];
-  var rf = RanksBrd[FROMSQ(move)];
-  var ft = FilesBrd[TOSQ(move)];
-  var rt = RanksBrd[TOSQ(move)];
+  var ff = FilesBrd[fromSQ(move)];
+  var rf = RanksBrd[fromSQ(move)];
+  var ft = FilesBrd[toSQ(move)];
+  var rt = RanksBrd[toSQ(move)];
 
   MvStr = FileChar[ff] + RankChar[rf] + FileChar[ft] + RankChar[rt];
 

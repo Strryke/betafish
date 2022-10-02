@@ -4,31 +4,31 @@ function ClearPiece(sq) {
   var index;
   var t_pceNum = -1;
 
-  HASH_PCE(pce, sq);
+  hashPiece(pce, sq);
 
   GameBoard.pieces[sq] = PIECES.EMPTY;
   GameBoard.material[col] -= PieceVal[pce];
 
   for (index = 0; index < GameBoard.pceNum[pce]; ++index) {
-    if (GameBoard.pList[PCEINDEX(pce, index)] == sq) {
+    if (GameBoard.pList[getPieceIndex(pce, index)] == sq) {
       t_pceNum = index;
       break;
     }
   }
 
   GameBoard.pceNum[pce]--;
-  GameBoard.pList[PCEINDEX(pce, t_pceNum)] =
-    GameBoard.pList[PCEINDEX(pce, GameBoard.pceNum[pce])];
+  GameBoard.pList[getPieceIndex(pce, t_pceNum)] =
+    GameBoard.pList[getPieceIndex(pce, GameBoard.pceNum[pce])];
 }
 
 function AddPiece(sq, pce) {
   var col = PieceCol[pce];
 
-  HASH_PCE(pce, sq);
+  hashPiece(pce, sq);
 
   GameBoard.pieces[sq] = pce;
   GameBoard.material[col] += PieceVal[pce];
-  GameBoard.pList[PCEINDEX(pce, GameBoard.pceNum[pce])] = sq;
+  GameBoard.pList[getPieceIndex(pce, GameBoard.pceNum[pce])] = sq;
   GameBoard.pceNum[pce]++;
 }
 
@@ -36,23 +36,23 @@ function MovePiece(from, to) {
   var index = 0;
   var pce = GameBoard.pieces[from];
 
-  HASH_PCE(pce, from);
+  hashPiece(pce, from);
   GameBoard.pieces[from] = PIECES.EMPTY;
 
-  HASH_PCE(pce, to);
+  hashPiece(pce, to);
   GameBoard.pieces[to] = pce;
 
   for (index = 0; index < GameBoard.pceNum[pce]; ++index) {
-    if (GameBoard.pList[PCEINDEX(pce, index)] == from) {
-      GameBoard.pList[PCEINDEX(pce, index)] = to;
+    if (GameBoard.pList[getPieceIndex(pce, index)] == from) {
+      GameBoard.pList[getPieceIndex(pce, index)] = to;
       break;
     }
   }
 }
 
 function MakeMove(move) {
-  var from = FROMSQ(move);
-  var to = TOSQ(move);
+  var from = fromSQ(move);
+  var to = toSQ(move);
   var side = GameBoard.side;
 
   GameBoard.history[GameBoard.hisPly].posKey = GameBoard.posKey;
@@ -82,8 +82,8 @@ function MakeMove(move) {
     }
   }
 
-  if (GameBoard.enPas != SQUARES.NO_SQ) HASH_EP();
-  HASH_CA();
+  if (GameBoard.enPas != SQUARES.NO_SQ) hashEnPas();
+  hashCastle();
 
   GameBoard.history[GameBoard.hisPly].move = move;
   GameBoard.history[GameBoard.hisPly].fiftyMove = GameBoard.fiftyMove;
@@ -94,7 +94,7 @@ function MakeMove(move) {
   GameBoard.castlePerm &= CastlePerm[to];
   GameBoard.enPas = SQUARES.NO_SQ;
 
-  HASH_CA();
+  hashCastle();
 
   var captured = CAPTURED(move);
   GameBoard.fiftyMove++;
@@ -115,7 +115,7 @@ function MakeMove(move) {
       } else {
         GameBoard.enPas = from - 10;
       }
-      HASH_EP();
+      hashEnPas();
     }
   }
 
@@ -128,9 +128,11 @@ function MakeMove(move) {
   }
 
   GameBoard.side ^= 1;
-  HASH_SIDE();
+  hashSide();
 
-  if (SqAttacked(GameBoard.pList[PCEINDEX(Kings[side], 0)], GameBoard.side)) {
+  if (
+    SqAttacked(GameBoard.pList[getPieceIndex(Kings[side], 0)], GameBoard.side)
+  ) {
     TakeMove();
     return false;
   }
@@ -143,21 +145,21 @@ function TakeMove() {
   GameBoard.ply--;
 
   var move = GameBoard.history[GameBoard.hisPly].move;
-  var from = FROMSQ(move);
-  var to = TOSQ(move);
+  var from = fromSQ(move);
+  var to = toSQ(move);
 
-  if (GameBoard.enPas != SQUARES.NO_SQ) HASH_EP();
-  HASH_CA();
+  if (GameBoard.enPas != SQUARES.NO_SQ) hashEnPas();
+  hashCastle();
 
   GameBoard.castlePerm = GameBoard.history[GameBoard.hisPly].castlePerm;
   GameBoard.fiftyMove = GameBoard.history[GameBoard.hisPly].fiftyMove;
   GameBoard.enPas = GameBoard.history[GameBoard.hisPly].enPas;
 
-  if (GameBoard.enPas != SQUARES.NO_SQ) HASH_EP();
-  HASH_CA();
+  if (GameBoard.enPas != SQUARES.NO_SQ) hashEnPas();
+  hashCastle();
 
   GameBoard.side ^= 1;
-  HASH_SIDE();
+  hashSide();
 
   if ((MFLAGEP & move) != 0) {
     if (GameBoard.side == COLOURS.WHITE) {

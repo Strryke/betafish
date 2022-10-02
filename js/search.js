@@ -162,7 +162,7 @@ function AlphaBeta(alpha, beta, depth) {
   }
 
   var InCheck = SqAttacked(
-    GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)],
+    GameBoard.pList[getPieceIndex(Kings[GameBoard.side], 0)],
     GameBoard.side ^ 1
   );
   if (InCheck == true) {
@@ -229,7 +229,7 @@ function AlphaBeta(alpha, beta, depth) {
       }
       if ((Move & MFLAGCAP) == 0) {
         GameBoard.searchHistory[
-          GameBoard.pieces[FROMSQ(Move)] * BRD_SQ_NUM + TOSQ(Move)
+          GameBoard.pieces[fromSQ(Move)] * BRD_SQ_NUM + toSQ(Move)
         ] += depth * depth;
       }
       alpha = Score;

@@ -41,19 +41,17 @@ function FR2SQ(f, r) {
 
 // prettier-ignore
 {
-var PieceBig = [ false, false, true, true, true, true, true, false, true, true, true, true, true ];
-var PieceMaj = [ false, false, false, false, true, true, true, false, false, false, true, true, true ];
-var PieceMin = [ false, false, true, true, false, false, false, false, true, true, false, false, false ];
+
 var PieceVal= [ 0, 100, 325, 325, 550, 1000, 50000, 100, 325, 325, 550, 1000, 50000  ];
 var PieceCol = [ COLOURS.BOTH, COLOURS.WHITE, COLOURS.WHITE, COLOURS.WHITE, COLOURS.WHITE, COLOURS.WHITE, COLOURS.WHITE,
 COLOURS.BLACK, COLOURS.BLACK, COLOURS.BLACK, COLOURS.BLACK, COLOURS.BLACK, COLOURS.BLACK ];
 
-var PiecePawn = [ false, true, false, false, false, false, false, true, false, false, false, false, false ];	
-var PieceKnight = [ false, false, true, false, false, false, false, false, true, false, false, false, false ];
-var PieceKing = [ false, false, false, false, false, false, true, false, false, false, false, false, true ];
-var PieceRookQueen = [ false, false, false, false, true, true, false, false, false, false, true, true, false ];
-var PieceBishopQueen = [ false, false, false, true, false, true, false, false, false, true, false, true, false ];
-var PieceSlides = [ false, false, false, true, true, true, false, false, false, true, true, true, false ];
+var PiecePawn = [ 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 ];	
+var PieceKnight = [ 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 ];
+var PieceKing = [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1 ];
+var PieceRookQueen = [ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0 ];
+var PieceBishopQueen = [ 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0 ];
+var PieceSlides = [ 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0 ];
 
 var KnDir = [ -8, -19,	-21, -12, 8, 19, 21, 12 ];
 var RkDir = [ -1, -10,	1, 10 ];
@@ -90,19 +88,19 @@ var Mirror64 = [
   3, 4, 5, 6, 7,
 ];
 
-function SQ64(sq120) {
+function sq120to64(sq120) {
   return Sq120ToSq64[sq120];
 }
 
-function SQ120(sq64) {
+function sq64to120(sq64) {
   return Sq64ToSq120[sq64];
 }
 
-function PCEINDEX(pce, pceNum) {
+function getPieceIndex(pce, pceNum) {
   return pce * 10 + pceNum;
 }
 
-function MIRROR64(sq) {
+function mirror64(sq) {
   return Mirror64[sq];
 }
 
@@ -133,10 +131,10 @@ var CastlePerm = [
 0001 0000 0000 0000 0000 0000 0000 -> Castle 0x1000000
 */
 
-function FROMSQ(m) {
+function fromSQ(m) {
   return m & 0x7f;
 }
-function TOSQ(m) {
+function toSQ(m) {
   return (m >> 7) & 0x7f;
 }
 function CAPTURED(m) {
@@ -160,16 +158,16 @@ function SQOFFBOARD(sq) {
   return false;
 }
 
-function HASH_PCE(pce, sq) {
+function hashPiece(pce, sq) {
   GameBoard.posKey ^= PieceKeys[pce * 120 + sq];
 }
 
-function HASH_CA() {
+function hashCastle() {
   GameBoard.posKey ^= CastleKeys[GameBoard.castlePerm];
 }
-function HASH_SIDE() {
+function hashSide() {
   GameBoard.posKey ^= SideKey;
 }
-function HASH_EP() {
+function hashEnPas() {
   GameBoard.posKey ^= PieceKeys[GameBoard.enPas];
 }

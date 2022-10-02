@@ -1,4 +1,4 @@
-function PCEINDEX(pce, pceNum) {
+function getPieceIndex(pce, pceNum) {
   return pce * 10 + pceNum;
 }
 
@@ -32,7 +32,7 @@ function CheckBoard() {
 
   for (t_piece = PIECES.wP; t_piece <= PIECES.bK; ++t_piece) {
     for (t_pce_num = 0; t_pce_num < GameBoard.pceNum[t_piece]; ++t_pce_num) {
-      sq120 = GameBoard.pList[PCEINDEX(t_piece, t_pce_num)];
+      sq120 = GameBoard.pList[getPieceIndex(t_piece, t_pce_num)];
       if (GameBoard.pieces[sq120] != t_piece) {
         console.log("Error Pce Lists");
         return false;
@@ -41,7 +41,7 @@ function CheckBoard() {
   }
 
   for (sq64 = 0; sq64 < 64; ++sq64) {
-    sq120 = SQ120(sq64);
+    sq120 = sq64to120(sq64);
     t_piece = GameBoard.pieces[sq120];
     t_pceNum[t_piece]++;
     t_material[PieceCol[t_piece]] += PieceVal[t_piece];
@@ -180,7 +180,7 @@ function ParseMove(from, to) {
     ++index
   ) {
     Move = GameBoard.moveList[index];
-    if (FROMSQ(Move) == from && TOSQ(Move) == to) {
+    if (fromSQ(Move) == from && toSQ(Move) == to) {
       PromPce = PROMOTED(Move);
       if (PromPce != PIECES.EMPTY) {
         if (
@@ -242,7 +242,7 @@ function PrintPieceLists() {
         "Piece " +
           PceChar[piece] +
           " on " +
-          PrSq(GameBoard.pList[PCEINDEX(piece, pceNum)])
+          PrSq(GameBoard.pList[getPieceIndex(piece, pceNum)])
       );
     }
   }
@@ -264,14 +264,14 @@ function UpdateListsMaterial() {
   }
 
   for (index = 0; index < 64; ++index) {
-    sq = SQ120(index);
+    sq = sq64to120(index);
     piece = GameBoard.pieces[sq];
     if (piece != PIECES.EMPTY) {
       colour = PieceCol[piece];
 
       GameBoard.material[colour] += PieceVal[piece];
 
-      GameBoard.pList[PCEINDEX(piece, GameBoard.pceNum[piece])] = sq;
+      GameBoard.pList[getPieceIndex(piece, GameBoard.pceNum[piece])] = sq;
       GameBoard.pceNum[piece]++;
     }
   }
@@ -285,7 +285,7 @@ function ResetBoard() {
   }
 
   for (index = 0; index < 64; ++index) {
-    GameBoard.pieces[SQ120(index)] = PIECES.EMPTY;
+    GameBoard.pieces[sq64to120(index)] = PIECES.EMPTY;
   }
 
   GameBoard.side = COLOURS.BOTH;

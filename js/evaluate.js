@@ -55,78 +55,78 @@ function EvalPosition() {
 
   pce = PIECES.wP;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score += PawnTable[SQ64(sq)];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score += PawnTable[sq120to64(sq)];
   }
 
   pce = PIECES.bP;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score -= PawnTable[MIRROR64(SQ64(sq))];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score -= PawnTable[mirror64(sq120to64(sq))];
   }
 
   pce = PIECES.wN;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score += KnightTable[SQ64(sq)];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score += KnightTable[sq120to64(sq)];
   }
 
   pce = PIECES.bN;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score -= KnightTable[MIRROR64(SQ64(sq))];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score -= KnightTable[mirror64(sq120to64(sq))];
   }
 
   pce = PIECES.wB;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score += BishopTable[SQ64(sq)];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score += BishopTable[sq120to64(sq)];
   }
 
   pce = PIECES.bB;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score -= BishopTable[MIRROR64(SQ64(sq))];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score -= BishopTable[mirror64(sq120to64(sq))];
   }
 
   pce = PIECES.wR;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score += RookTable[SQ64(sq)];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score += RookTable[sq120to64(sq)];
   }
 
   pce = PIECES.bR;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score -= RookTable[MIRROR64(SQ64(sq))];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score -= RookTable[mirror64(sq120to64(sq))];
   }
 
   pce = PIECES.wQ;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score += RookTable[SQ64(sq)];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score += RookTable[sq120to64(sq)];
   }
 
   pce = PIECES.bQ;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-    score -= RookTable[MIRROR64(SQ64(sq))];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+    score -= RookTable[mirror64(sq120to64(sq))];
   }
 
   pce = PIECES.wK;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
     score += SearchController.endgame
-      ? EndKingTable[SQ64(sq)]
-      : KingTable[SQ64(sq)];
+      ? EndKingTable[sq120to64(sq)]
+      : KingTable[sq120to64(sq)];
   }
 
   pce = PIECES.bK;
   for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-    sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+    sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
     score -= SearchController.endgame
-      ? EndKingTable[MIRROR64(SQ64(sq))]
-      : KingTable[MIRROR64(SQ64(sq))];
+      ? EndKingTable[mirror64(sq120to64(sq))]
+      : KingTable[mirror64(sq120to64(sq))];
   }
 
   if (GameBoard.pceNum[PIECES.wB] >= 2) {

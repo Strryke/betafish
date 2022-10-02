@@ -135,7 +135,7 @@ function CheckResult() {
   }
 
   var InCheck = SqAttacked(
-    GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)],
+    GameBoard.pList[getPieceIndex(Kings[GameBoard.side], 0)],
     GameBoard.side ^ 1
   );
 
