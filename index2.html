@@ -1,12 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <title>Betafish.js | Chess AI</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles/cm-chessboard.css" />
+
+    <!-- Custom styles for this template -->
+    <link href="sticky-footer.css" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="chessboard-1.0.0.min.css" type="text/css" />
   </head>
-  <body></body>
+  <body class="d-flex flex-column h-100">
+    <!-- Begin page content -->
+    <main class="flex-shrink-0">
+      <div class="container">
+        <h1 class="mt-2">Betafish.js</h1>
+
+        <p class="lead">Status: <span id="GameStatus"></span></p>
+        <div class="input-group mb-2">
+          <input type="text" class="form-control fw-light" id="FENField" />
+          <button
+            class="btn btn-outline-secondary"
+            onclick="copyFEN()"
+            type="button"
+          >
+            Copy FEN
+          </button>
+          <button
+            class="btn btn-outline-secondary"
+            id="SetFen"
+            type="button"
+            onclick="setFEN()"
+          >
+            Set FEN
+          </button>
+        </div>
+        <div id="board" style="width: 100%"></div>
+
+        <div>
+          <div class="my-2 d-flex">
+            <button
+              type="button"
+              class="btn btn-outline-danger me-2"
+              onclick="resetBoard()"
+            >
+              Reset
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary me-2"
+              onclick="takeBack()"
+            >
+              Take Back
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary me-2"
+              onclick="makeAIMove()"
+            >
+              Get AI Move
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary me-4"
+              onclick="flipBoard()"
+            >
+              Flip Board
+            </button>
+            <div class="flex-grow-1">
+              <div class="input-group">
+                <label class="input-group-text" for="inputGroupSelect01"
+                  >Thinking time:</label
+                >
+                <select class="form-select" id="thinkingTime">
+                  <option selected value="1">1</option>
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text">s</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light">
+      <div class="container text-center">
+        <span class="text-muted"
+          >Made with ❤️ by Gavin. <br />
+          <a href="https://github.com/Strryke/betafish">View source</a></span
+        >
+      </div>
+    </footer>
+  </body>
+  <script type="module">
+    import {
+      Chessboard,
+      INPUT_EVENT_TYPE,
+    } from "./cm-chessboard/Chessboard.js";
+    import { FEN } from "./cm-chessboard/model/Position.js";
+
+    window.board = new Chessboard(document.getElementById("board"), {
+      position: FEN.start,
+      sprite: { url: "../assets/images/chessboard-sprite-staunty.svg" },
+    });
+
+    window.board.enableMoveInput(inputHandler);
+    function inputHandler(event) {
+      switch (event.type) {
+        case INPUT_EVENT_TYPE.moveInputStarted:
+          console.log(`moveInputStarted: ${event.square}`);
+          return true;
+        case INPUT_EVENT_TYPE.validateMoveInput:
+          console.log(
+            `validateMoveInput: ${event.squareFrom}-${event.squareTo}`
+          );
+          return true;
+        case INPUT_EVENT_TYPE.moveInputCanceled:
+          console.log(`moveInputCanceled`);
+      }
+    }
+  </script>
   <script src="js/betafish.js"></script>
   <script src="js/main2.js"></script>
+  <script src="js/io2.js"></script>
 </html>

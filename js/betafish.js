@@ -643,5 +643,12 @@ const engine = function () {
       ParseFen(START_FEN);
       PrintBoard();
     },
+    getFEN: () => {
+      return GenerateFEN();
+    },
+    setFEN: (fen) => {
+      ParseFen(fen);
+      PrintBoard();
+    },
   };
 };
