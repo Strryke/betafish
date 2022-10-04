@@ -79,6 +79,7 @@ function onMoveEnd() {
 // update the board position after the piece snap
 // for castling, en passant, pawn promotion
 function onSnapEnd() {
+  console.log(EvalPosition());
   board.position(GenerateFEN());
   CheckStatus();
 }

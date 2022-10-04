@@ -62,7 +62,7 @@
             <button
               type="button"
               class="btn btn-outline-primary me-2"
-              onclick="makeAIMove()"
+              onclick="getAIMove()"
             >
               Get AI Move
             </button>
@@ -119,6 +119,12 @@
 
     window.board.enableMoveInput(inputHandler);
 
+    function getAIMove() {
+      game.makeAIMove();
+      // get best move
+      this.chessboard.setPosition(game.getFEN(), true);
+    }
+
     function inputHandler(event) {
       // console.log("event", event);
       event.chessboard.removeMarkers(MARKER_TYPE.dot);
@@ -157,6 +163,7 @@
       }
     }
   </script>
+  <script></script>
   <script src="js/betafish.js"></script>
   <script src="js/main2.js"></script>
   <script src="js/io2.js"></script>

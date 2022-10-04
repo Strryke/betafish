@@ -226,6 +226,8 @@ function UpdateListsMaterial() {
       GameBoard.pceNum[piece]++;
     }
   }
+
+  console.log(GameBoard.material);
 }
 
 function ResetBoard() {
