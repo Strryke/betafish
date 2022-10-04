@@ -35,11 +35,11 @@ function makeAIMove() {
   let bestMove = getBestMove();
 
   // highlight AI's move
-  fromSQ = PrMove(bestMove).slice(0, 2);
-  toSQ = PrMove(bestMove).slice(2, 4);
+  fSq = PrMove(bestMove).slice(0, 2);
+  tSq = PrMove(bestMove).slice(2, 4);
 
-  $board.find(".square-" + fromSQ).addClass(`highlight-${color}`);
-  $board.find(".square-" + toSQ).addClass(`highlight-${color}`);
+  $board.find(".square-" + fSq).addClass(`highlight-${color}`);
+  $board.find(".square-" + tSq).addClass(`highlight-${color}`);
 
   MakeMove(bestMove);
 
