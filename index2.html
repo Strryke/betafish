@@ -140,20 +140,14 @@
             // wait for the move input process has finished
             this.chessboard.setPosition(game.getFEN(), true).then(() => {
               event.chessboard.enableMoveInput(inputHandler);
-              // update position, maybe castled and wait for animation has finished
-              // const possibleMoves = chess.moves({ verbose: true });
-              // if (possibleMoves.length > 0) {
-              //   const randomIndex = Math.floor(
-              //     Math.random() * possibleMoves.length
-              //   );
-              //   const randomMove = possibleMoves[randomIndex];
-              //   setTimeout(() => {
-              //     // smoother with 500ms delay
-              //     chess.move({ from: randomMove.from, to: randomMove.to });
-              //     event.chessboard.enableMoveInput(inputHandler, COLOR.white);
-              //     event.chessboard.setPosition(chess.fen(), true);
-              //   }, 500);
-              // }
+              setTimeout(() => {
+                game.makeAIMove();
+                // get best move
+                this.chessboard.setPosition(game.getFEN(), true);
+
+                // board.position(GenerateFEN());
+                // CheckStatus();
+              }, 500);
             });
           });
         } else {

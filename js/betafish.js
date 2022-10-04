@@ -93,6 +93,12 @@ const engine = function () {
   
   var Sq120ToSq64 = new Array(BRD_SQ_NUM);
   var Sq64ToSq120 = new Array(64);
+  var Mirror64 = [
+    56, 57, 58, 59, 60, 61, 62, 63, 48, 49, 50, 51, 52, 53, 54, 55, 40, 41, 42,
+    43, 44, 45, 46, 47, 32, 33, 34, 35, 36, 37, 38, 39, 24, 25, 26, 27, 28, 29,
+    30, 31, 16, 17, 18, 19, 20, 21, 22, 23, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2,
+    3, 4, 5, 6, 7,
+  ];
   }
 
   // init
@@ -178,7 +184,7 @@ const engine = function () {
     InitHashKeys();
     InitSq120To64();
     InitBoardVars();
-    // InitMvvLva();
+    InitMvvLva();
   }
 
   /****************************\
@@ -292,8 +298,6 @@ const engine = function () {
   GameBoard.searchKillers = new Array(3 * MAXDEPTH);
   GameBoard.GameOver = false;
 
-  init();
-
   function PrintBoard() {
     var sq, file, rank, piece;
 
@@ -381,8 +385,6 @@ const engine = function () {
       tempHalfMove--;
     }
     fenStr += tempHalfMove / 2;
-
-    console.log(fenStr);
 
     return fenStr;
   }
@@ -477,7 +479,6 @@ const engine = function () {
   }
 
   function UpdateListsMaterial() {
-    console.log(GameBoard.pceNum);
     var piece, sq, index, colour;
 
     for (index = 0; index < 14 * 120; ++index) {
@@ -495,7 +496,6 @@ const engine = function () {
     for (index = 0; index < 64; ++index) {
       sq = sq64to120(index);
       piece = GameBoard.pieces[sq];
-      console.log(sq);
       if (piece != PIECES.EMPTY) {
         colour = PieceCol[piece];
 
@@ -505,7 +505,6 @@ const engine = function () {
         GameBoard.pceNum[piece]++;
       }
     }
-    console.log(GameBoard.pceNum);
   }
 
   function ResetBoard() {
@@ -592,8 +591,6 @@ const engine = function () {
       fenCnt++;
     } // while loop end
 
-    console.log(GameBoard.pieces);
-
     //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     GameBoard.side = fen[fenCnt] == "w" ? COLOURS.WHITE : COLOURS.BLACK;
     fenCnt += 2;
@@ -633,7 +630,6 @@ const engine = function () {
 
     GameBoard.posKey = GeneratePosKey();
     UpdateListsMaterial();
-    console.log(GameBoard.pceNum);
   }
 
   function SqAttacked(sq, side) {
@@ -1455,6 +1451,549 @@ const engine = function () {
   /****************************\
    ============================
    
+    Evaluation
+   ============================              
+  \****************************/
+
+  // prettier-ignore
+  {
+  var PawnTable = [
+      0,   0,   0,   0,   0,   0,   0,   0, 
+     10,  10,   0, -10, -10,   0,  10,  10, 
+      5,   0,   0,   5,   5,   0,   0,   5, 
+      0,   0,  10,  20,  20,  10,   0,   0, 
+      5,   5,   5,  10,  10,   5,   5,   5, 
+      10, 10,  10,  20,  20,  10,  10,  10, 
+      20, 20,  20,  30,  30,  20,  20,  20, 
+      0,   0,   0,   0,   0,   0,   0,   0,
+  ];
+  
+  var KnightTable = [
+    0, -10, 0, 0, 0, 0, -10, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 10, 10, 10, 10, 0,
+    0, 0, 0, 10, 20, 20, 10, 5, 0, 5, 10, 15, 20, 20, 15, 10, 5, 5, 10, 10, 20,
+    20, 10, 10, 5, 0, 0, 5, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ];
+  
+  var BishopTable = [
+    0, 0, -10, 0, 0, -10, 0, 0, 0, 0, 0, 10, 10, 0, 0, 0, 0, 0, 10, 15, 15, 10, 0,
+    0, 0, 10, 15, 20, 20, 15, 10, 0, 0, 10, 15, 20, 20, 15, 10, 0, 0, 0, 10, 15,
+    15, 10, 0, 0, 0, 0, 0, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ];
+  
+  var RookTable = [
+    0, 0, 5, 10, 10, 5, 0, 0, 0, 0, 5, 10, 10, 5, 0, 0, 0, 0, 5, 10, 10, 5, 0, 0,
+    0, 0, 5, 10, 10, 5, 0, 0, 0, 0, 5, 10, 10, 5, 0, 0, 0, 0, 5, 10, 10, 5, 0, 0,
+    25, 25, 25, 25, 25, 25, 25, 25, 0, 0, 5, 10, 10, 5, 0, 0,
+  ];
+  
+  var KingTable = [
+    20, 30, 10, 0, 0, 10, 30, 20, 20, 20, 0, 0, 0, 0, 20, 20, -10, -20, -20, -20,
+    -20, -20, -20, -10, -20, -30, -30, -40, -40, -30, -30, -20, -30, -40, -40,
+    -50,
+  ];
+  
+  var EndKingTable = [
+    -50, -30, -30, -30, -30, -30, -30, -50, -30, -30, 0, 0, 0, 0, -30, -30, -30,
+    -10, 20, 30, 30, 20, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10,
+    30, 40, 40, 30, -10, -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -30, 0, 0,
+    0, 0, -30, -30, -50, -30, -30, -30, -30, -30, -30, -50,
+  ];
+  }
+
+  const BishopPair = 40;
+
+  function EvalPosition() {
+    var score =
+      GameBoard.material[COLOURS.WHITE] - GameBoard.material[COLOURS.BLACK];
+
+    var pce;
+    var sq;
+    var pceNum;
+
+    pce = PIECES.wP;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score += PawnTable[sq120to64(sq)];
+    }
+
+    pce = PIECES.bP;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score -= PawnTable[mirror64(sq120to64(sq))];
+    }
+
+    pce = PIECES.wN;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score += KnightTable[sq120to64(sq)];
+    }
+
+    pce = PIECES.bN;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score -= KnightTable[mirror64(sq120to64(sq))];
+    }
+
+    pce = PIECES.wB;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score += BishopTable[sq120to64(sq)];
+    }
+
+    pce = PIECES.bB;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score -= BishopTable[mirror64(sq120to64(sq))];
+    }
+
+    pce = PIECES.wR;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score += RookTable[sq120to64(sq)];
+    }
+
+    pce = PIECES.bR;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score -= RookTable[mirror64(sq120to64(sq))];
+    }
+
+    pce = PIECES.wQ;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score += RookTable[sq120to64(sq)];
+    }
+
+    pce = PIECES.bQ;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score -= RookTable[mirror64(sq120to64(sq))];
+    }
+
+    pce = PIECES.wK;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score += SearchController.endgame
+        ? EndKingTable[sq120to64(sq)]
+        : KingTable[sq120to64(sq)];
+    }
+
+    pce = PIECES.bK;
+    for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+      sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
+      score -= SearchController.endgame
+        ? EndKingTable[mirror64(sq120to64(sq))]
+        : KingTable[mirror64(sq120to64(sq))];
+    }
+
+    if (GameBoard.pceNum[PIECES.wB] >= 2) {
+      score += BishopPair;
+    }
+
+    if (GameBoard.pceNum[PIECES.bB] >= 2) {
+      score -= BishopPair;
+    }
+
+    if (GameBoard.side == COLOURS.WHITE) {
+      return score;
+    } else {
+      return -score;
+    }
+  }
+
+  /****************************\
+   ============================
+   
+    Search
+   ============================              
+  \****************************/
+
+  function GetPvLine(depth) {
+    var move = ProbePvTable();
+    var count = 0;
+
+    while (move != NOMOVE && count < depth) {
+      if (MoveExists(move) == true) {
+        MakeMove(move);
+        GameBoard.PvArray[count++] = move;
+      } else {
+        break;
+      }
+      move = ProbePvTable();
+    }
+
+    while (GameBoard.ply > 0) {
+      TakeMove();
+    }
+
+    return count;
+  }
+
+  function ProbePvTable() {
+    var index = GameBoard.posKey % PVENTRIES;
+
+    if (GameBoard.PvTable[index].posKey == GameBoard.posKey) {
+      return GameBoard.PvTable[index].move;
+    }
+
+    return NOMOVE;
+  }
+
+  function StorePvMove(move) {
+    var index = GameBoard.posKey % PVENTRIES;
+    GameBoard.PvTable[index].posKey = GameBoard.posKey;
+    GameBoard.PvTable[index].move = move;
+  }
+
+  var SearchController = {};
+
+  SearchController.nodes;
+  SearchController.fh;
+  SearchController.fhf;
+  SearchController.depth;
+  SearchController.time;
+  SearchController.start;
+  SearchController.stop;
+  SearchController.best;
+  SearchController.thinking;
+  SearchController.endgame;
+
+  function PickNextMove(MoveNum) {
+    var index = 0;
+    var bestScore = -1;
+    var bestNum = MoveNum;
+
+    for (
+      index = MoveNum;
+      index < GameBoard.moveListStart[GameBoard.ply + 1];
+      ++index
+    ) {
+      if (GameBoard.moveScores[index] > bestScore) {
+        bestScore = GameBoard.moveScores[index];
+        bestNum = index;
+      }
+    }
+
+    if (bestNum != MoveNum) {
+      var temp = 0;
+      temp = GameBoard.moveScores[MoveNum];
+      GameBoard.moveScores[MoveNum] = GameBoard.moveScores[bestNum];
+      GameBoard.moveScores[bestNum] = temp;
+
+      temp = GameBoard.moveList[MoveNum];
+      GameBoard.moveList[MoveNum] = GameBoard.moveList[bestNum];
+      GameBoard.moveList[bestNum] = temp;
+    }
+  }
+
+  function ClearPvTable() {
+    for (index = 0; index < PVENTRIES; index++) {
+      GameBoard.PvTable[index].move = NOMOVE;
+      GameBoard.PvTable[index].posKey = 0;
+    }
+  }
+
+  function CheckUp() {
+    if (performance.now() - SearchController.start > SearchController.time) {
+      SearchController.stop = true;
+    }
+  }
+
+  function IsRepetition() {
+    var index = 0;
+
+    for (
+      index = GameBoard.hisPly - GameBoard.fiftyMove;
+      index < GameBoard.hisPly - 1;
+      ++index
+    ) {
+      if (GameBoard.posKey == GameBoard.history[index].posKey) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function Quiescence(alpha, beta) {
+    if ((SearchController.nodes & 2047) == 0) {
+      CheckUp();
+    }
+
+    SearchController.nodes++;
+
+    if ((IsRepetition() || GameBoard.fiftyMove >= 100) && GameBoard.ply != 0) {
+      return 0;
+    }
+
+    if (GameBoard.ply > MAXDEPTH - 1) {
+      return EvalPosition();
+    }
+
+    var Score = EvalPosition();
+
+    if (Score >= beta) {
+      return beta;
+    }
+
+    if (Score > alpha) {
+      alpha = Score;
+    }
+
+    GenerateCaptures();
+
+    var MoveNum = 0;
+    var Legal = 0;
+    var OldAlpha = alpha;
+    var BestMove = NOMOVE;
+    var Move = NOMOVE;
+
+    for (
+      MoveNum = GameBoard.moveListStart[GameBoard.ply];
+      MoveNum < GameBoard.moveListStart[GameBoard.ply + 1];
+      ++MoveNum
+    ) {
+      PickNextMove(MoveNum);
+
+      Move = GameBoard.moveList[MoveNum];
+
+      if (MakeMove(Move) == false) {
+        continue;
+      }
+      Legal++;
+      Score = -Quiescence(-beta, -alpha);
+
+      TakeMove();
+
+      if (SearchController.stop == true) {
+        return 0;
+      }
+
+      if (Score > alpha) {
+        if (Score >= beta) {
+          if (Legal == 1) {
+            SearchController.fhf++;
+          }
+          SearchController.fh++;
+          return beta;
+        }
+        alpha = Score;
+        BestMove = Move;
+      }
+    }
+
+    if (alpha != OldAlpha) {
+      StorePvMove(BestMove);
+    }
+
+    return alpha;
+  }
+
+  function AlphaBeta(alpha, beta, depth) {
+    if (depth <= 0) {
+      return Quiescence(alpha, beta);
+    }
+
+    if ((SearchController.nodes & 2047) == 0) {
+      CheckUp();
+    }
+
+    SearchController.nodes++;
+
+    if ((IsRepetition() || GameBoard.fiftyMove >= 100) && GameBoard.ply != 0) {
+      return 0;
+    }
+
+    if (GameBoard.ply > MAXDEPTH - 1) {
+      return EvalPosition();
+    }
+
+    var InCheck = SqAttacked(
+      GameBoard.pList[getPieceIndex(Kings[GameBoard.side], 0)],
+      GameBoard.side ^ 1
+    );
+    if (InCheck == true) {
+      depth++;
+    }
+
+    var Score = -INFINITE;
+
+    GenerateMoves();
+
+    var MoveNum = 0;
+    var Legal = 0;
+    var OldAlpha = alpha;
+    var BestMove = NOMOVE;
+    var Move = NOMOVE;
+
+    var PvMove = ProbePvTable();
+    if (PvMove != NOMOVE) {
+      for (
+        MoveNum = GameBoard.moveListStart[GameBoard.ply];
+        MoveNum < GameBoard.moveListStart[GameBoard.ply + 1];
+        ++MoveNum
+      ) {
+        if (GameBoard.moveList[MoveNum] == PvMove) {
+          GameBoard.moveScores[MoveNum] = 2000000;
+          break;
+        }
+      }
+    }
+
+    for (
+      MoveNum = GameBoard.moveListStart[GameBoard.ply];
+      MoveNum < GameBoard.moveListStart[GameBoard.ply + 1];
+      ++MoveNum
+    ) {
+      PickNextMove(MoveNum);
+
+      Move = GameBoard.moveList[MoveNum];
+
+      if (MakeMove(Move) == false) {
+        continue;
+      }
+      Legal++;
+      Score = -AlphaBeta(-beta, -alpha, depth - 1);
+
+      TakeMove();
+
+      if (SearchController.stop == true) {
+        return 0;
+      }
+
+      if (Score > alpha) {
+        if (Score >= beta) {
+          if (Legal == 1) {
+            SearchController.fhf++;
+          }
+          SearchController.fh++;
+          if ((Move & MFLAGCAP) == 0) {
+            GameBoard.searchKillers[MAXDEPTH + GameBoard.ply] =
+              GameBoard.searchKillers[GameBoard.ply];
+            GameBoard.searchKillers[GameBoard.ply] = Move;
+          }
+          return beta;
+        }
+        if ((Move & MFLAGCAP) == 0) {
+          GameBoard.searchHistory[
+            GameBoard.pieces[fromSQ(Move)] * BRD_SQ_NUM + toSQ(Move)
+          ] += depth * depth;
+        }
+        alpha = Score;
+        BestMove = Move;
+      }
+    }
+
+    if (Legal == 0) {
+      if (InCheck == true) {
+        return -MATE + GameBoard.ply;
+      } else {
+        return 0;
+      }
+    }
+
+    if (alpha != OldAlpha) {
+      StorePvMove(BestMove);
+    }
+
+    return alpha;
+  }
+
+  function CheckEndgame() {
+    totalMaterial =
+      GameBoard.material[COLOURS.WHITE] + GameBoard.material[COLOURS.BLACK];
+
+    if (totalMaterial < 105000) {
+      SearchController.endgame = true;
+    } else {
+      SearchController.endgame = false;
+    }
+  }
+
+  function ClearForSearch() {
+    var index = 0;
+
+    for (index = 0; index < 14 * BRD_SQ_NUM; ++index) {
+      GameBoard.searchHistory[index] = 0;
+    }
+
+    for (index = 0; index < 3 * MAXDEPTH; ++index) {
+      GameBoard.searchKillers[index] = 0;
+    }
+
+    ClearPvTable();
+    CheckEndgame();
+
+    GameBoard.ply = 0;
+    SearchController.nodes = 0;
+    SearchController.fh = 0;
+    SearchController.fhf = 0;
+    SearchController.start = performance.now();
+    SearchController.stop = false;
+  }
+
+  function SearchPosition() {
+    var bestMove = NOMOVE;
+    var bestScore = -INFINITE;
+    var currentDepth = 0;
+    var line;
+    var PvNum;
+    var c;
+    ClearForSearch();
+
+    for (
+      currentDepth = 1;
+      currentDepth <= SearchController.depth;
+      ++currentDepth
+    ) {
+      bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
+
+      if (SearchController.stop) {
+        break;
+      }
+
+      bestMove = ProbePvTable();
+      line =
+        "D:" +
+        currentDepth +
+        " Best:" +
+        PrMove(bestMove) +
+        " Score:" +
+        bestScore +
+        " nodes:" +
+        SearchController.nodes;
+
+      PvNum = GetPvLine(currentDepth);
+      line += " Pv:";
+      for (c = 0; c < PvNum; ++c) {
+        line += " " + PrMove(GameBoard.PvArray[c]);
+      }
+      if (currentDepth != 1) {
+        line +=
+          " Ordering:" +
+          ((SearchController.fhf / SearchController.fh) * 100).toFixed(2) +
+          "%";
+      }
+      console.log(line);
+    }
+
+    SearchController.best = bestMove;
+    SearchController.thinking = false;
+  }
+
+  function getBestMove() {
+    SearchController.depth = MAXDEPTH;
+    // var t = $.now();
+    // var tt = document.getElementById("thinkingTime").value;
+
+    SearchController.time = parseInt(1) * 1000;
+    SearchPosition();
+    return SearchController.best;
+  }
+
+  /****************************\
+   ============================
+   
     Perft Test
    ============================              
   \****************************/
@@ -1574,6 +2113,9 @@ const engine = function () {
     return moves;
   }
 
+  // LETS GO INITALISE!!!
+  init();
+
   /****************************\
    ============================
    
@@ -1612,6 +2154,15 @@ const engine = function () {
         MakeMove(parsed);
         return true;
       }
+    },
+    makeAIMove: () => {
+      let bestMove = getBestMove();
+
+      // highlight AI's move
+      // fSq = PrMove(bestMove).slice(0, 2);
+      // tSq = PrMove(bestMove).slice(2, 4);
+      MakeMove(bestMove);
+      // CheckStatus();
     },
   };
 };
