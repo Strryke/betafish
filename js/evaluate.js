@@ -1,205 +1,239 @@
 // prettier-ignore
 {
-var PawnTable = [
+
+var mg_value = {
+  wP: 82, bP: 82,
+  wN: 337, bN: 337,
+  wB: 365, bB: 365,
+  wR: 477, bR: 477,
+  wQ: 1025, bQ: 1025,
+  wK: 50000, bK: 50000,
+}
+
+var eg_value = {
+  wP: 94, bP: 94,
+  wN: 281, bN: 281,
+  wB: 297, bB: 297,
+  wR: 512, bR: 512,
+  wQ: 936, bQ: 936,
+  wK: 50000, bK: 50000,
+}
+
+mg_pawn_table = [
   0,   0,   0,   0,   0,   0,  0,   0,
-  98, 134,  61,  95,  68, 126, 34, -11,
-  -6,   7,  26,  31,  65,  56, 25, -20,
- -14,  13,   6,  21,  23,  12, 17, -23,
- -27,  -2,  -5,  12,  17,   6, 10, -25,
- -26,  -4,  -4, -10,   3,   3, 33, -12,
- -35,  -1, -20, -23, -15,  24, 38, -22,
-   0,   0,   0,   0,   0,   0,  0,   0,
+ 98, 134,  61,  95,  68, 126, 34, -11,
+ -6,   7,  26,  31,  65,  56, 25, -20,
+-14,  13,   6,  21,  23,  12, 17, -23,
+-27,  -2,  -5,  12,  17,   6, 10, -25,
+-26,  -4,  -4, -10,   3,   3, 33, -12,
+-35,  -1, -20, -23, -15,  24, 38, -22,
+  0,   0,   0,   0,   0,   0,  0,   0,
 ];
 
-var KnightTable = [
-  -167, -89, -34, -49,  61, -97, -15, -107,
-  -73, -41,  72,  36,  23,  62,   7,  -17,
-  -47,  60,  37,  65,  84, 129,  73,   44,
-   -9,  17,  19,  53,  37,  69,  18,   22,
-  -13,   4,  16,  13,  28,  19,  21,   -8,
-  -23,  -9,  12,  10,  19,  17,  25,  -16,
-  -29, -53, -12,  -3,  -1,  18, -14,  -19,
- -105, -21, -58, -33, -17, -28, -19,  -23,
+eg_pawn_table = [
+  0,   0,   0,   0,   0,   0,   0,   0,
+178, 173, 158, 134, 147, 132, 165, 187,
+ 94, 100,  85,  67,  56,  53,  82,  84,
+ 32,  24,  13,   5,  -2,   4,  17,  17,
+ 13,   9,  -3,  -7,  -7,  -8,   3,  -1,
+  4,   7,  -6,   1,   0,  -5,  -1,  -8,
+ 13,   8,   8,  10,  13,   0,   2,  -7,
+  0,   0,   0,   0,   0,   0,   0,   0,
 ];
 
-var BishopTable = [
-  -29,   4, -82, -37, -25, -42,   7,  -8,
-  -26,  16, -18, -13,  30,  59,  18, -47,
-  -16,  37,  43,  40,  35,  50,  37,  -2,
-   -4,   5,  19,  50,  37,  37,   7,  -2,
-   -6,  13,  13,  26,  34,  12,  10,   4,
-    0,  15,  15,  15,  14,  27,  18,  10,
-    4,  15,  16,   0,   7,  21,  33,   1,
-  -33,  -3, -14, -21, -13, -12, -39, -21,
+mg_knight_table = [
+-167, -89, -34, -49,  61, -97, -15, -107,
+ -73, -41,  72,  36,  23,  62,   7,  -17,
+ -47,  60,  37,  65,  84, 129,  73,   44,
+  -9,  17,  19,  53,  37,  69,  18,   22,
+ -13,   4,  16,  13,  28,  19,  21,   -8,
+ -23,  -9,  12,  10,  19,  17,  25,  -16,
+ -29, -53, -12,  -3,  -1,  18, -14,  -19,
+-105, -21, -58, -33, -17, -28, -19,  -23,
 ];
 
-var RookTable = [
-  -29,   4, -82, -37, -25, -42,   7,  -8,
-  -26,  16, -18, -13,  30,  59,  18, -47,
-  -16,  37,  43,  40,  35,  50,  37,  -2,
-   -4,   5,  19,  50,  37,  37,   7,  -2,
-   -6,  13,  13,  26,  34,  12,  10,   4,
-    0,  15,  15,  15,  14,  27,  18,  10,
-    4,  15,  16,   0,   7,  21,  33,   1,
-  -33,  -3, -14, -21, -13, -12, -39, -21,
+eg_knight_table = [
+-58, -38, -13, -28, -31, -27, -63, -99,
+-25,  -8, -25,  -2,  -9, -25, -24, -52,
+-24, -20,  10,   9,  -1,  -9, -19, -41,
+-17,   3,  22,  22,  22,  11,   8, -18,
+-18,  -6,  16,  25,  16,  17,   4, -18,
+-23,  -3,  -1,  15,  10,  -3, -20, -22,
+-42, -20, -10,  -5,  -2, -20, -23, -44,
+-29, -51, -23, -15, -22, -18, -50, -64,
 ];
 
-var QueenTable = [
-  -28,   0,  29,  12,  59,  44,  43,  45,
-  -24, -39,  -5,   1, -16,  57,  28,  54,
-  -13, -17,   7,   8,  29,  56,  47,  57,
-  -27, -27, -16, -16,  -1,  17,  -2,   1,
-   -9, -26,  -9, -10,  -2,  -4,   3,  -3,
-  -14,   2, -11,  -2,  -5,   2,  14,   5,
-  -35,  -8,  11,   2,   8,  15,  -3,   1,
-   -1, -18,  -9,  10, -15, -25, -31, -50,
-]
-
-var KingTable = [
-  -65,  23,  16, -15, -56, -34,   2,  13,
-  29,  -1, -20,  -7,  -8,  -4, -38, -29,
-  -9,  24,   2, -16, -20,   6,  22, -22,
- -17, -20, -12, -27, -30, -25, -14, -36,
- -49,  -1, -27, -39, -46, -44, -33, -51,
- -14, -14, -22, -46, -44, -30, -15, -27,
-   1,   7,  -8, -64, -43, -16,   9,   8,
- -15,  36,  12, -54,   8, -28,  24,  14,
+mg_bishop_table = [
+-29,   4, -82, -37, -25, -42,   7,  -8,
+-26,  16, -18, -13,  30,  59,  18, -47,
+-16,  37,  43,  40,  35,  50,  37,  -2,
+ -4,   5,  19,  50,  37,  37,   7,  -2,
+ -6,  13,  13,  26,  34,  12,  10,   4,
+  0,  15,  15,  15,  14,  27,  18,  10,
+  4,  15,  16,   0,   7,  21,  33,   1,
+-33,  -3, -14, -21, -13, -12, -39, -21,
 ];
 
-var EndKingTable = [
-  -50, -30, -30, -30, -30, -30, -30, -50, -30, -30, 0, 0, 0, 0, -30, -30, -30,
-  -10, 20, 30, 30, 20, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10,
-  30, 40, 40, 30, -10, -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -30, 0, 0,
-  0, 0, -30, -30, -50, -30, -30, -30, -30, -30, -30, -50,
+eg_bishop_table = [
+-14, -21, -11,  -8, -7,  -9, -17, -24,
+ -8,  -4,   7, -12, -3, -13,  -4, -14,
+  2,  -8,   0,  -1, -2,   6,   0,   4,
+ -3,   9,  12,   9, 14,  10,   3,   2,
+ -6,   3,  13,  19,  7,  10,  -3,  -9,
+-12,  -3,   8,  10, 13,   3,  -7, -15,
+-14, -18,  -7,  -1,  4,  -9, -15, -27,
+-23,  -9, -23,  -5, -9, -16,  -5, -17,
+];
+
+mg_rook_table = [
+ 32,  42,  32,  51, 63,  9,  31,  43,
+ 27,  32,  58,  62, 80, 67,  26,  44,
+ -5,  19,  26,  36, 17, 45,  61,  16,
+-24, -11,   7,  26, 24, 35,  -8, -20,
+-36, -26, -12,  -1,  9, -7,   6, -23,
+-45, -25, -16, -17,  3,  0,  -5, -33,
+-44, -16, -20,  -9, -1, 11,  -6, -71,
+-19, -13,   1,  17, 16,  7, -37, -26,
+];
+
+eg_rook_table = [
+13, 10, 18, 15, 12,  12,   8,   5,
+11, 13, 13, 11, -3,   3,   8,   3,
+ 7,  7,  7,  5,  4,  -3,  -5,  -3,
+ 4,  3, 13,  1,  2,   1,  -1,   2,
+ 3,  5,  8,  4, -5,  -6,  -8, -11,
+-4,  0, -5, -1, -7, -12,  -8, -16,
+-6, -6,  0,  2, -9,  -9, -11,  -3,
+-9,  2,  3, -1, -5, -13,   4, -20,
+];
+
+mg_queen_table = [
+-28,   0,  29,  12,  59,  44,  43,  45,
+-24, -39,  -5,   1, -16,  57,  28,  54,
+-13, -17,   7,   8,  29,  56,  47,  57,
+-27, -27, -16, -16,  -1,  17,  -2,   1,
+ -9, -26,  -9, -10,  -2,  -4,   3,  -3,
+-14,   2, -11,  -2,  -5,   2,  14,   5,
+-35,  -8,  11,   2,   8,  15,  -3,   1,
+ -1, -18,  -9,  10, -15, -25, -31, -50,
+];
+
+eg_queen_table = [
+ -9,  22,  22,  27,  27,  19,  10,  20,
+-17,  20,  32,  41,  58,  25,  30,   0,
+-20,   6,   9,  49,  47,  35,  19,   9,
+  3,  22,  24,  45,  57,  40,  57,  36,
+-18,  28,  19,  47,  31,  34,  39,  23,
+-16, -27,  15,   6,   9,  17,  10,   5,
+-22, -23, -30, -16, -16, -23, -36, -32,
+-33, -28, -22, -43,  -5, -32, -20, -41,
+];
+
+mg_king_table = [
+-65,  23,  16, -15, -56, -34,   2,  13,
+ 29,  -1, -20,  -7,  -8,  -4, -38, -29,
+ -9,  24,   2, -16, -20,   6,  22, -22,
+-17, -20, -12, -27, -30, -25, -14, -36,
+-49,  -1, -27, -39, -46, -44, -33, -51,
+-14, -14, -22, -46, -44, -30, -15, -27,
+  1,   7,  -8, -64, -43, -16,   9,   8,
+-15,  36,  12, -54,   8, -28,  24,  14,
+];
+
+eg_king_table = [
+-74, -35, -18, -18, -11,  15,   4, -17,
+-12,  17,  14,  17,  17,  38,  23,  11,
+ 10,  17,  23,  15,  20,  45,  44,  13,
+ -8,  22,  24,  27,  26,  33,  26,   3,
+-18,  -4,  21,  24,  27,  23,   9, -11,
+-19,  -3,  11,  21,  23,  16,   7,  -9,
+-27, -11,   4,  13,  14,   4,  -5, -17,
+-53, -34, -21, -11, -28, -14, -24, -43
 ];
 }
 
-var table = {
-  wP: PawnTable.slice().reverse(),
-  bP: PawnTable,
-  wN: KnightTable.slice().reverse(),
-  bN: KnightTable,
-  wB: BishopTable.slice().reverse(),
-  bB: BishopTable,
-  wR: RookTable.slice().reverse(),
-  bR: RookTable,
-  wQ: QueenTable.slice().reverse(),
-  bQ: QueenTable,
-  wK: KingTable.slice().reverse(),
-  bK: KingTable,
-}
 
 const BishopPair = 40;
 
-function EvalPosition() {
-  var score =
-    GameBoard.material[COLOURS.WHITE] - GameBoard.material[COLOURS.BLACK];
+  var mg_pesto_table = {
+    wP: mg_pawn_table,
+    bP: mg_pawn_table,
+    wN: mg_knight_table,
+    bN: mg_knight_table,
+    wB: mg_bishop_table,
+    bB: mg_bishop_table,
+    wR: mg_rook_table,
+    bR: mg_rook_table,
+    wQ: mg_queen_table,
+    bQ: mg_queen_table,
+    wK: mg_king_table,
+    bK: mg_king_table
+  }
 
-  var pce;
-  var sq;
-  var pceNum;
+  var eg_pesto_table = {
+    wP: eg_pawn_table,
+    bP: eg_pawn_table,
+    wN: eg_knight_table,
+    bN: eg_knight_table,
+    wB: eg_bishop_table,
+    bB: eg_bishop_table,
+    wR: eg_rook_table,
+    bR: eg_rook_table,
+    wQ: eg_queen_table,
+    bQ: eg_queen_table,
+    wK: eg_king_table,
+    bK: eg_king_table
+  }
+
+  // wP - bP - wN - bN - wB - bB - wR - bR - wQ - bQ - wK - bK
+  var gamephaseInc = {
+    wP: 0,
+    bP: 0,
+    wN: 1,
+    bN: 1,
+    wB: 1,
+    bB: 1,
+    wR: 2,
+    bR: 2,
+    wQ: 4,
+    bQ: 4,
+    wK: 0,
+    bK: 0
+  }
+
+
+// initTables()
+
+
+function EvalPosition() {
+  let gamePhase = 0
+  // var score =
+  //   GameBoard.material[COLOURS.WHITE] - GameBoard.material[COLOURS.BLACK];
+
+  let mg_score = 0
+  let eg_score = 0
 
   for (pce in PIECES) {
-    // console.log(GameBoard.pceNum)
-    // console.log(pce)
-    // pce = PIECES[pce];
     for (pceNum = 0; pceNum < GameBoard.pceNum[PIECES[pce]]; pceNum++) {
-      // console.log("a")
       sq = GameBoard.pList[getPieceIndex(PIECES[pce], pceNum)];
-      // score += PawnTable[SQ64(sq)];
       if (pce[0] == "w") {
-        score += table[pce][sq120to64(sq)];
+        // score += table[pce][sq120to64(sq)];
+        mg_score += mg_value[pce] + mg_pesto_table[pce][mirror64(sq120to64(sq))]
+        eg_score += eg_value[pce] + eg_pesto_table[pce][mirror64(sq120to64(sq))]
+        gamePhase += gamephaseInc[pce];
       } else {
-        score -= table[pce][(mirror64(sq120to64(sq)))];
+        // score -= table[pce][(mirror64(sq120to64(sq)))];
+        mg_score -= mg_value[pce] + mg_pesto_table[pce][sq120to64(sq)]
+        eg_score -= eg_value[pce] + eg_pesto_table[pce][sq120to64(sq)]
+        gamePhase += gamephaseInc[pce];
       }
     }
-
   }
 
+  mg_phase = gamePhase
+  eg_phase = 24 - gamePhase
 
-  // pce = PIECES.wP;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score += PawnTable[sq120to64(sq)];
-  // }
-
-  // pce = PIECES.bP;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score -= PawnTable[mirror64(sq120to64(sq))];
-  // }
-
-  // pce = PIECES.wN;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score += KnightTable[sq120to64(sq)];
-  // }
-
-  // pce = PIECES.bN;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score -= KnightTable[mirror64(sq120to64(sq))];
-  // }
-
-  // pce = PIECES.wB;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score += BishopTable[sq120to64(sq)];
-  // }
-
-  // pce = PIECES.bB;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score -= BishopTable[mirror64(sq120to64(sq))];
-  // }
-
-  // pce = PIECES.wR;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score += RookTable[sq120to64(sq)];
-  // }
-
-  // pce = PIECES.bR;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score -= RookTable[mirror64(sq120to64(sq))];
-  // }
-
-  // pce = PIECES.wQ;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score += RookTable[sq120to64(sq)];
-  // }
-
-  // pce = PIECES.bQ;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score -= RookTable[mirror64(sq120to64(sq))];
-  // }
-
-  // pce = PIECES.wK;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score += SearchController.endgame
-  //     ? EndKingTable[sq120to64(sq)]
-  //     : KingTable[sq120to64(sq)];
-  // }
-
-  // pce = PIECES.bK;
-  // for (pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
-  //   sq = GameBoard.pList[getPieceIndex(pce, pceNum)];
-  //   score -= SearchController.endgame
-  //     ? EndKingTable[mirror64(sq120to64(sq))]
-  //     : KingTable[mirror64(sq120to64(sq))];
-  // }
-
-  if (GameBoard.pceNum[PIECES.wB] >= 2) {
-    score += BishopPair;
-  }
-
-  if (GameBoard.pceNum[PIECES.bB] >= 2) {
-    score -= BishopPair;
-  }
+  score = (mg_score * mg_phase + eg_score * eg_phase) / 24;
 
   if (GameBoard.side == COLOURS.WHITE) {
     return score;
