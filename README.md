@@ -1,7 +1,5 @@
 # Betafish
 
-![Betafish](cover.png)
-
 <img src="cover.png" alt="Betafish" width="300"/>
 
 Betafish - An amalgamation of AlphaZero and Stockfish.
