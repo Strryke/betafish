@@ -1,6 +1,6 @@
 # Betafish
 
-![Betafish](cover.png)
+<img src="cover.png" alt="Betafish" width="300"/>
 
 Betafish - An amalgamation of AlphaZero and Stockfish.
 
@@ -28,6 +28,9 @@ This enables Betafish to search to a depth of 7-8 plies and around ~1mil possibl
 - Opening tables
 
 Of course, re-writing this in a compiled language like C++ would be a huge improvement. I wrote it in Javacript as I wanted to deploy it as a web app, as what fun would a game be without letting your friends challenge it? However, I quickly realised the limitations, as JS is definitely not suited for these computing-intensive tasks.
+
+## Changelogs
+- 1.1 - Changed evaluation function from [Simplified Eval](https://www.chessprogramming.org/Simplified_Evaluation_Function) to [PeSTO's Eval Function](https://www.chessprogramming.org/PeSTO%27s_Evaluation_Function). Major improvements ~ 200 elo.
 
 ## Credits
 
