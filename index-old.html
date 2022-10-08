@@ -9,8 +9,6 @@
     <!-- Bootstrap core CSS -->
     <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <link rel="stylesheet" href="../assets/styles/cm-chessboard.css" />
-
     <!-- Custom styles for this template -->
     <link href="sticky-footer.css" rel="stylesheet" />
     <link href="styles.css" rel="stylesheet" type="text/css" />
@@ -32,16 +30,11 @@
           >
             Copy FEN
           </button>
-          <button
-            class="btn btn-outline-secondary"
-            id="SetFen"
-            type="button"
-            onclick="setFEN()"
-          >
+          <button class="btn btn-outline-secondary" id="SetFen" type="button">
             Set FEN
           </button>
         </div>
-        <div id="board" style="width: 100%"></div>
+        <div id="board1" style="width: 100%"></div>
 
         <div>
           <div class="my-2 d-flex">
@@ -62,7 +55,7 @@
             <button
               type="button"
               class="btn btn-outline-primary me-2"
-              onclick="getAIMove()"
+              onclick="makeAIMove()"
             >
               Get AI Move
             </button>
@@ -73,7 +66,7 @@
             >
               Flip Board
             </button>
-            <div class="flex-grow-1">
+            <div class="flex-grow-1 d-sm-none">
               <div class="input-group">
                 <label class="input-group-text" for="inputGroupSelect01"
                   >Thinking time:</label
@@ -91,6 +84,41 @@
             </div>
           </div>
         </div>
+
+        <!-- <div class="accordion mt-2" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+              >
+                View Movegen Data for nerds
+              </button>
+            </h2>
+            <div
+              id="collapseOne"
+              class="accordion-collapse collapse show"
+              aria-labelledby="headingOne"
+              data-bs-parent="#accordionExample"
+            >
+              <div class="accordion-body">
+                <strong>This is the first item's accordion body.</strong> It is
+                shown by default, until the collapse plugin adds the appropriate
+                classes that we use to style each element. These classes control
+                the overall appearance, as well as the showing and hiding via
+                CSS transitions. You can modify any of this with custom CSS or
+                overriding our default variables. It's also worth noting that
+                just about any HTML can go within the
+                <code>.accordion-body</code>, though the transition does limit
+                overflow.
+              </div>
+            </div>
+          </div>
+        </div> -->
       </div>
     </main>
 
@@ -103,68 +131,19 @@
       </div>
     </footer>
   </body>
-  <script type="module">
-    import {
-      INPUT_EVENT_TYPE,
-      COLOR,
-      Chessboard,
-      MARKER_TYPE,
-    } from "./cm-chessboard/Chessboard.js";
-    import { FEN } from "./cm-chessboard/model/Position.js";
-
-    window.board = new Chessboard(document.getElementById("board"), {
-      position: game.getFEN(),
-      sprite: { url: "../assets/images/chessboard-sprite-staunty.svg" },
-    });
-
-    window.board.enableMoveInput(inputHandler);
-
-    function getAIMove() {
-      game.makeAIMove();
-      // get best move
-      this.chessboard.setPosition(game.getFEN(), true);
-    }
-
-    function inputHandler(event) {
-      // console.log("event", event);
-      event.chessboard.removeMarkers(MARKER_TYPE.dot);
-      if (event.type === INPUT_EVENT_TYPE.moveInputStarted) {
-        const moves = game.getMovesAtSquare(event.square);
-        for (const move of moves) {
-          // draw dots on possible squares
-          event.chessboard.addMarker(MARKER_TYPE.dot, move);
-        }
-        return moves.length > 0;
-      } else if (event.type === INPUT_EVENT_TYPE.validateMoveInput) {
-        // const move = { from: event.squareFrom, to: event.squareTo };
-        // const result = chess.move(move);
-        const result = game.move(event.squareFrom, event.squareTo);
-        console.log(result);
-        if (result) {
-          event.chessboard.disableMoveInput();
-          this.chessboard.state.moveInputProcess.then(() => {
-            // wait for the move input process has finished
-            this.chessboard.setPosition(game.getFEN(), true).then(() => {
-              event.chessboard.enableMoveInput(inputHandler);
-              setTimeout(() => {
-                game.makeAIMove();
-                // get best move
-                this.chessboard.setPosition(game.getFEN(), true);
-
-                // board.position(GenerateFEN());
-                // CheckStatus();
-              }, 500);
-            });
-          });
-        } else {
-          console.warn("invalid move");
-        }
-        return result;
-      }
-    }
-  </script>
-  <script></script>
-  <script src="js/betafish.js"></script>
-  <script src="js/main2.js"></script>
-  <script src="js/io2.js"></script>
+  <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/jquery-1.10.1.min.js"></script>
+  <script src="js/defs.js"></script>
+  <script src="js/io.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/movegen.js"></script>
+  <script src="js/makemove.js"></script>
+  <script src="js/evaluate.js"></script>
+  <script src="js/pvtable.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/perft.js"></script>
+  <script src="js/gui.js"></script>
+  <script src="chessboard-1.0.0.min.js"></script>
+  <script src="js/chessboard.js"></script>
+  <script src="js/main.js"></script>
 </html>

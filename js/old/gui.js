@@ -4,6 +4,7 @@ $("#SetFen").click(function () {
   board.position(fenStr);
   // CheckStatus();
   // PerftTest(5);
+  console.log(EvalPosition());
 });
 
 $("#NewGame").click(function () {});

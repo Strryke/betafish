@@ -1,96 +1,139 @@
-$(function () {
-  init();
-  ParseFen(START_FEN);
-  PrintBoard();
-  // PrintMoveList();
-  GenerateFEN();
-  CheckStatus();
+import {
+  INPUT_EVENT_TYPE,
+  COLOR,
+  Chessboard,
+  MARKER_TYPE,
+} from "../cm-chessboard/Chessboard.js";
+
+var game_over = false;
+
+// get elements
+const fen = document.getElementById("fen");
+const setFEN = document.getElementById("setFEN");
+const copyFEN = document.getElementById("copyFEN");
+const reset = document.getElementById("reset");
+const takeback = document.getElementById("takeback");
+const makeMove = document.getElementById("makeMove");
+const flipBoard = document.getElementById("flipBoard");
+const aiMove = document.getElementById("aiMove");
+const uiState = document.getElementById("uiState");
+const thinkingTime = document.getElementById("thinkingTime");
+
+// initialise engine
+var game = new engine();
+
+// initialise chessboard
+const board = new Chessboard(document.getElementById("board"), {
+  position: game.getFEN(),
+  sprite: { url: "../assets/images/chessboard-sprite-staunty.svg" },
 });
 
-function InitFilesRanksBrd() {
-  var index = 0;
-  var file = FILES.FILE_A;
-  var rank = RANKS.RANK_1;
-  var sq = SQUARES.A1;
+updateStatus();
 
-  for (index = 0; index < BRD_SQ_NUM; ++index) {
-    FilesBrd[index] = SQUARES.OFFBOARD;
-    RanksBrd[index] = SQUARES.OFFBOARD;
-  }
+board.enableMoveInput(inputHandler);
 
-  for (rank = RANKS.RANK_1; rank <= RANKS.RANK_8; ++rank) {
-    for (file = FILES.FILE_A; file <= FILES.FILE_H; ++file) {
-      sq = fileRanktoSquare(file, rank);
-      FilesBrd[sq] = file;
-      RanksBrd[sq] = rank;
+// IO functions
+
+function inputHandler(event) {
+  event.chessboard.removeMarkers(MARKER_TYPE.dot);
+  if (event.type === INPUT_EVENT_TYPE.moveInputStarted) {
+    const moves = game.getMovesAtSquare(event.square);
+    for (const move of moves) {
+      // draw dots on possible squares
+      event.chessboard.addMarker(MARKER_TYPE.dot, move);
     }
-  }
-}
-
-function InitHashKeys() {
-  var index = 0;
-
-  for (index = 0; index < 14 * 120; ++index) {
-    PieceKeys[index] = getRand32();
-  }
-
-  SideKey = getRand32();
-
-  for (index = 0; index < 16; ++index) {
-    CastleKeys[index] = getRand32();
-  }
-}
-
-function InitSq120To64() {
-  var index = 0;
-  var file = FILES.FILE_A;
-  var rank = RANKS.RANK_1;
-  var sq = SQUARES.A1;
-  var sq64 = 0;
-
-  for (index = 0; index < BRD_SQ_NUM; ++index) {
-    Sq120ToSq64[index] = 65;
-  }
-
-  for (index = 0; index < 64; ++index) {
-    Sq64ToSq120[index] = 120;
-  }
-
-  for (rank = RANKS.RANK_1; rank <= RANKS.RANK_8; ++rank) {
-    for (file = FILES.FILE_A; file <= FILES.FILE_H; ++file) {
-      sq = fileRanktoSquare(file, rank);
-      Sq64ToSq120[sq64] = sq;
-      Sq120ToSq64[sq] = sq64;
-      sq64++;
+    return moves.length > 0;
+  } else if (event.type === INPUT_EVENT_TYPE.validateMoveInput) {
+    const result = game.move(event.squareFrom, event.squareTo);
+    if (result) {
+      event.chessboard.disableMoveInput();
+      this.chessboard.state.moveInputProcess.then(() => {
+        // wait for the move input process has finished
+        this.chessboard.setPosition(game.getFEN(), true).then(() => {
+          event.chessboard.enableMoveInput(inputHandler);
+          setTimeout(() => {
+            // updateStatus();
+            game.makeAIMove();
+            this.chessboard.setPosition(game.getFEN(), true);
+            updateStatus();
+          }, 500);
+        });
+      });
+    } else {
+      console.warn("invalid move");
     }
+    return result;
   }
 }
 
-function InitBoardVars() {
-  var index = 0;
-  for (index = 0; index < MAXGAMEMOVES; ++index) {
-    GameBoard.history.push({
-      move: NOMOVE,
-      castlePerm: 0,
-      enPas: 0,
-      fiftyMove: 0,
-      posKey: 0,
+// Check board status
+function updateStatus() {
+  if (game_over) return;
+
+  // update FEN
+  fen.value = game.getFEN();
+
+  const status = game.gameStatus();
+
+  if (status.over) {
+    game_over = true;
+    board.disableMoveInput();
+    alert(status.over);
+    uiState.innerHTML = `${status.over}!`;
+    return false;
+  } else {
+    // update status
+    status.check
+      ? (uiState.innerHTML = "Check!")
+      : (uiState.innerHTML =
+          `${status.sideToMove[0].toUpperCase()}${status.sideToMove.slice(1)}` +
+          " to move");
+  }
+}
+
+// event listeners
+reset.addEventListener("click", () => {
+  if (window.confirm("Are you sure you want to reset the board?")) {
+    game.reset();
+    board.setPosition(game.getFEN(), true);
+  }
+});
+
+takeBack.addEventListener("click", () => {
+  alert("Just like life, in chess, there are no takebacks.");
+});
+
+makeMove.addEventListener("click", () => {
+  setTimeout(() => {
+    game.makeAIMove();
+    board.setPosition(game.getFEN(), true);
+  }, 500);
+  updateStatus();
+});
+
+flipBoard.addEventListener("click", () => {
+  board.setOrientation(board.getOrientation() === "w" ? "b" : "w", true);
+});
+
+copyFEN.addEventListener("click", () => {
+  const fen = game.getFEN();
+  navigator.clipboard
+    .writeText(fen)
+    .then(() => {
+      alert("FEN copied to clipboard");
+    })
+    .catch(() => {
+      alert("Oops, something went wrong.");
     });
-  }
+});
 
-  for (index = 0; index < PVENTRIES; ++index) {
-    GameBoard.PvTable.push({
-      move: NOMOVE,
-      posKey: 0,
-    });
-  }
-}
+setFEN.addEventListener("click", () => {
+  const fenField = fen.value;
+  game.setFEN(fenField);
+  board.setPosition(fenField, true);
+  updateStatus();
+});
 
-function init() {
-  console.log("init() called");
-  InitFilesRanksBrd();
-  InitHashKeys();
-  InitSq120To64();
-  InitBoardVars();
-  InitMvvLva();
-}
+thinkingTime.addEventListener("change", () => {
+  game.setThinkingTime(thinkingTime.value);
+});

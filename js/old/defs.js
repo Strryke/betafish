@@ -101,7 +101,7 @@ function getPieceIndex(pce, pceNum) {
 }
 
 function mirror64(sq) {
-  return Mirror64[sq];
+  return sq ^ 56;
 }
 
 var Kings = [PIECES.wK, PIECES.bK];

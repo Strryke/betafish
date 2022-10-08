@@ -336,10 +336,6 @@ function SearchPosition() {
 
 function getBestMove() {
   SearchController.depth = MAXDEPTH;
-  var t = $.now();
-  var tt = document.getElementById("thinkingTime").value;
-
-  SearchController.time = parseInt(tt) * 1000;
   SearchPosition();
   return SearchController.best;
 }
