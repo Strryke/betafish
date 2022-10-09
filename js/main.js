@@ -26,6 +26,7 @@ var game = new engine();
 const board = new Chessboard(document.getElementById("board"), {
   position: game.getFEN(),
   sprite: { url: "../assets/images/chessboard-sprite-staunty.svg" },
+  animationDuration: 200,
 });
 
 updateStatus();
@@ -52,10 +53,9 @@ function inputHandler(event) {
         this.chessboard.setPosition(game.getFEN(), true).then(() => {
           event.chessboard.enableMoveInput(inputHandler);
           setTimeout(() => {
-            // updateStatus();
             game.makeAIMove();
             this.chessboard.setPosition(game.getFEN(), true);
-            updateStatus();
+            setTimeout(() => updateStatus(), 300);
           }, 500);
         });
       });
@@ -107,6 +107,7 @@ makeMove.addEventListener("click", () => {
   setTimeout(() => {
     game.makeAIMove();
     board.setPosition(game.getFEN(), true);
+    event.chessboard.enableMoveInput(inputHandler);
   }, 500);
   updateStatus();
 });
