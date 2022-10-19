@@ -6,9 +6,11 @@ Betafish - An amalgamation of AlphaZero and Stockfish.
 
 Play it [here](https://betafish.gavinong.com).
 
+[Read more about it on my blog.](https://gavinong.com/projects/betafish)
+
 ## Introduction
 
-Betafish is a chess engine and AI move finder written in Javascript, based on the Negamax algorithm. It beats Stockfish Level 5 on Lichess, and I estimate its around 1800-2000 Elo, depending on the thinking time afforded.
+Betafish is a chess engine and AI move finder written in Javascript, based on the Negamax algorithm. It beats Stockfish Level 6 on Lichess, and I estimate its around 1800-2000 Elo, depending on the thinking time afforded.
 
 ## Features
 
@@ -18,6 +20,7 @@ Betafish is a chess engine and AI move finder written in Javascript, based on th
 - Quiescence search
 - Iterative deepening
 - Piece-square tables
+- Tapered evaluation
 
 This enables Betafish to search to a depth of 7-8 plies and around ~1mil possible nodes, given a thinking time of around 1-2 seconds.
 
@@ -38,4 +41,4 @@ Of course, re-writing this in a compiled language like C++ would be a huge impro
 - [WukongJS](https://github.com/maksimKorzh/wukongJS) - A JS chess engine, written by Maksim Korzh, who was patient enough to answer my questions, give me pointers and point me in the right direction in this journey.
 - [Bluefever Software's YouTube series](https://www.youtube.com/watch?v=2eA0bD3wV3Q&list=PLZ1QII7yudbe4gz2gh9BCI6VDA-xafLog) - A 63-part series on chess programming, which was an absolute gold mine and served as inspiration for the bulk of the chess engine.
 - [Chess Programming Wiki](https://www.chessprogramming.org/Main_Page) - A great resource for chess programming.
-- [Chessboard.js](https://chessboardjs.com/) - The library I used for the GUI.
+- [CM Chessboard](https://github.com/shaack/cm-chessboard) - The library I used for the GUI.
