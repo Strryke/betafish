@@ -1,6 +1,9 @@
-.highlight-white {
-  box-shadow: inset 0 0 3px 3px yellow;
-}
-.highlight-black {
-  box-shadow: inset 0 0 3px 3px blue;
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+.container {
+  width: auto;
+  max-width: 680px;
+  padding: 0 15px;
 }
