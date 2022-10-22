@@ -95,6 +95,7 @@ function updateStatus() {
 reset.addEventListener("click", () => {
   if (window.confirm("Are you sure you want to reset the board?")) {
     game.reset();
+    board.enableMoveInput(inputHandler);
     board.setPosition(game.getFEN(), true);
   }
 });
@@ -107,7 +108,7 @@ makeMove.addEventListener("click", () => {
   setTimeout(() => {
     game.makeAIMove();
     board.setPosition(game.getFEN(), true);
-    event.chessboard.enableMoveInput(inputHandler);
+    board.enableMoveInput(inputHandler);
   }, 500);
   updateStatus();
 });
