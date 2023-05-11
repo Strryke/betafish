@@ -1959,12 +1959,8 @@ const engine = function () {
       }
       Legal++;
       Score = -AlphaBeta(-beta, -alpha, depth - 1);
-
+      
       TakeMove();
-
-      if (SearchController.stop == true) {
-        return 0;
-      }
 
       if (Score > alpha) {
         if (Score >= beta) {
@@ -1986,6 +1982,10 @@ const engine = function () {
         }
         alpha = Score;
         BestMove = Move;
+
+        if (SearchController.stop == true) {
+          break;
+        }  
       }
     }
 
@@ -2053,10 +2053,6 @@ const engine = function () {
     ) {
       bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 
-      if (SearchController.stop) {
-        break;
-      }
-
       bestMove = ProbePvTable();
       line =
         "D:" +
@@ -2080,6 +2076,9 @@ const engine = function () {
           "%";
       }
       console.log(line);
+      if (SearchController.stop) {
+        break;
+      }
     }
     
     SearchController.best = bestMove;
