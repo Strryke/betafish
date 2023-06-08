@@ -124,8 +124,6 @@ const engine = function () {
   }
 
   function InitHashKeys() {
-    var index;
-
     for (index = 0; index < 14 * 120; ++index) {
       PieceKeys[index] = getRand32();
     }
@@ -138,7 +136,6 @@ const engine = function () {
   }
 
   function InitSq120To64() {
-    var index;
     var file = FILES.FILE_A;
     var rank = RANKS.RANK_1;
     var sq = SQUARES.A1;
@@ -399,7 +396,6 @@ const engine = function () {
     var Move = NOMOVE;
     var PromPce = PIECES.EMPTY;
     var found = false;
-    var index;
 
     for (
       index = GameBoard.moveListStart[GameBoard.ply];
@@ -670,7 +666,7 @@ const engine = function () {
     }
 
     for (index = 0; index < 4; ++index) {
-      var dir = RkDir[index];
+      dir = RkDir[index];
       t_sq = sq + dir;
       pce = GameBoard.pieces[t_sq];
       while (pce != SQUARES.OFFBOARD) {
@@ -686,7 +682,7 @@ const engine = function () {
     }
 
     for (index = 0; index < 4; ++index) {
-      var dir = BiDir[index];
+      dir = BiDir[index];
       t_sq = sq + dir;
       pce = GameBoard.pieces[t_sq];
       while (pce != SQUARES.OFFBOARD) {
@@ -1098,7 +1094,6 @@ const engine = function () {
     var pceNum;
     var sq;
     var pceIndex;
-    var index;
     var pce;
     var t_sq;
     var dir;
@@ -1325,7 +1320,6 @@ const engine = function () {
     var pceNum;
     var sq;
     var pceIndex;
-    var index;
     var pce;
     var t_sq;
     var dir;
@@ -1483,7 +1477,7 @@ const engine = function () {
     wK: 50000, bK: 50000,
   }
   
-  var mg_pawn_table = [
+  mg_pawn_table = [
     0,   0,   0,   0,   0,   0,  0,   0,
    98, 134,  61,  95,  68, 126, 34, -11,
    -6,   7,  26,  31,  65,  56, 25, -20,
@@ -1494,7 +1488,7 @@ const engine = function () {
     0,   0,   0,   0,   0,   0,  0,   0,
   ];
   
-  var eg_pawn_table = [
+  eg_pawn_table = [
     0,   0,   0,   0,   0,   0,   0,   0,
   178, 173, 158, 134, 147, 132, 165, 187,
    94, 100,  85,  67,  56,  53,  82,  84,
@@ -1505,7 +1499,7 @@ const engine = function () {
     0,   0,   0,   0,   0,   0,   0,   0,
   ];
   
-  var mg_knight_table = [
+  mg_knight_table = [
   -167, -89, -34, -49,  61, -97, -15, -107,
    -73, -41,  72,  36,  23,  62,   7,  -17,
    -47,  60,  37,  65,  84, 129,  73,   44,
@@ -1516,7 +1510,7 @@ const engine = function () {
   -105, -21, -58, -33, -17, -28, -19,  -23,
   ];
   
-  var eg_knight_table = [
+  eg_knight_table = [
   -58, -38, -13, -28, -31, -27, -63, -99,
   -25,  -8, -25,  -2,  -9, -25, -24, -52,
   -24, -20,  10,   9,  -1,  -9, -19, -41,
@@ -1527,7 +1521,7 @@ const engine = function () {
   -29, -51, -23, -15, -22, -18, -50, -64,
   ];
   
-  var mg_bishop_table = [
+  mg_bishop_table = [
   -29,   4, -82, -37, -25, -42,   7,  -8,
   -26,  16, -18, -13,  30,  59,  18, -47,
   -16,  37,  43,  40,  35,  50,  37,  -2,
@@ -1538,7 +1532,7 @@ const engine = function () {
   -33,  -3, -14, -21, -13, -12, -39, -21,
   ];
   
-  var eg_bishop_table = [
+  eg_bishop_table = [
   -14, -21, -11,  -8, -7,  -9, -17, -24,
    -8,  -4,   7, -12, -3, -13,  -4, -14,
     2,  -8,   0,  -1, -2,   6,   0,   4,
@@ -1549,7 +1543,7 @@ const engine = function () {
   -23,  -9, -23,  -5, -9, -16,  -5, -17,
   ];
   
-  var mg_rook_table = [
+  mg_rook_table = [
    32,  42,  32,  51, 63,  9,  31,  43,
    27,  32,  58,  62, 80, 67,  26,  44,
    -5,  19,  26,  36, 17, 45,  61,  16,
@@ -1560,7 +1554,7 @@ const engine = function () {
   -19, -13,   1,  17, 16,  7, -37, -26,
   ];
   
-  var eg_rook_table = [
+  eg_rook_table = [
   13, 10, 18, 15, 12,  12,   8,   5,
   11, 13, 13, 11, -3,   3,   8,   3,
    7,  7,  7,  5,  4,  -3,  -5,  -3,
@@ -1571,7 +1565,7 @@ const engine = function () {
   -9,  2,  3, -1, -5, -13,   4, -20,
   ];
   
-  var mg_queen_table = [
+  mg_queen_table = [
   -28,   0,  29,  12,  59,  44,  43,  45,
   -24, -39,  -5,   1, -16,  57,  28,  54,
   -13, -17,   7,   8,  29,  56,  47,  57,
@@ -1582,7 +1576,7 @@ const engine = function () {
    -1, -18,  -9,  10, -15, -25, -31, -50,
   ];
   
-  var eg_queen_table = [
+  eg_queen_table = [
    -9,  22,  22,  27,  27,  19,  10,  20,
   -17,  20,  32,  41,  58,  25,  30,   0,
   -20,   6,   9,  49,  47,  35,  19,   9,
@@ -1593,7 +1587,7 @@ const engine = function () {
   -33, -28, -22, -43,  -5, -32, -20, -41,
   ];
   
-  var mg_king_table = [
+  mg_king_table = [
   -65,  23,  16, -15, -56, -34,   2,  13,
    29,  -1, -20,  -7,  -8,  -4, -38, -29,
    -9,  24,   2, -16, -20,   6,  22, -22,
@@ -1604,7 +1598,7 @@ const engine = function () {
   -15,  36,  12, -54,   8, -28,  24,  14,
   ];
   
-  var eg_king_table = [
+  eg_king_table = [
   -74, -35, -18, -18, -11,  15,   4, -17,
   -12,  17,  14,  17,  17,  38,  23,  11,
    10,  17,  23,  15,  20,  45,  44,  13,
@@ -1674,9 +1668,9 @@ const engine = function () {
     let mg_score = 0;
     let eg_score = 0;
 
-    for (var pce in PIECES) {
-      for (var pceNum = 0; pceNum < GameBoard.pceNum[PIECES[pce]]; pceNum++) {
-        var sq = GameBoard.pList[getPieceIndex(PIECES[pce], pceNum)];
+    for (pce in PIECES) {
+      for (pceNum = 0; pceNum < GameBoard.pceNum[PIECES[pce]]; pceNum++) {
+        sq = GameBoard.pList[getPieceIndex(PIECES[pce], pceNum)];
         if (pce[0] == "w") {
           // score += table[pce][sq120to64(sq)];
           mg_score +=
@@ -1693,10 +1687,10 @@ const engine = function () {
       }
     }
 
-    var mg_phase = gamePhase;
-    var eg_phase = 24 - gamePhase;
+    mg_phase = gamePhase;
+    eg_phase = 24 - gamePhase;
 
-    var score = (mg_score * mg_phase + eg_score * eg_phase) / 24;
+    score = (mg_score * mg_phase + eg_score * eg_phase) / 24;
 
     if (GameBoard.side == COLOURS.WHITE) {
       return score;
@@ -1791,7 +1785,6 @@ const engine = function () {
   }
 
   function ClearPvTable() {
-    var index;
     for (index = 0; index < PVENTRIES; index++) {
       GameBoard.PvTable[index].move = NOMOVE;
       GameBoard.PvTable[index].posKey = 0;
@@ -1959,8 +1952,12 @@ const engine = function () {
       }
       Legal++;
       Score = -AlphaBeta(-beta, -alpha, depth - 1);
-      
+
       TakeMove();
+
+      if (SearchController.stop == true) {
+        return 0;
+      }
 
       if (Score > alpha) {
         if (Score >= beta) {
@@ -1982,10 +1979,6 @@ const engine = function () {
         }
         alpha = Score;
         BestMove = Move;
-
-        if (SearchController.stop == true) {
-          break;
-        }  
       }
     }
 
@@ -2005,7 +1998,7 @@ const engine = function () {
   }
 
   function CheckEndgame() {
-    var totalMaterial =
+    totalMaterial =
       GameBoard.material[COLOURS.WHITE] + GameBoard.material[COLOURS.BLACK];
 
     if (totalMaterial < 105000) {
@@ -2040,7 +2033,7 @@ const engine = function () {
   function SearchPosition() {
     var bestMove = NOMOVE;
     var bestScore = -INFINITE;
-    var currentDepth;
+    var currentDepth = 0;
     var line;
     var PvNum;
     var c;
@@ -2052,6 +2045,10 @@ const engine = function () {
       ++currentDepth
     ) {
       bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
+
+      if (SearchController.stop) {
+        break;
+      }
 
       bestMove = ProbePvTable();
       line =
@@ -2076,11 +2073,8 @@ const engine = function () {
           "%";
       }
       console.log(line);
-      if (SearchController.stop) {
-        break;
-      }
     }
-    
+
     SearchController.best = bestMove;
     SearchController.thinking = false;
   }
@@ -2195,9 +2189,7 @@ const engine = function () {
     GenerateMoves();
     var index;
     var move;
-    var moves = [];
-    var from;
-    var to;
+    moves = [];
 
     for (
       index = GameBoard.moveListStart[GameBoard.ply];
@@ -2247,10 +2239,8 @@ const engine = function () {
 
   function makeAIMove() {
     if (gameStatus().over) return false;
-    
     let bestMove = getBestMove();
     MakeMove(bestMove);
-    return PrMove(bestMove)
   }
 
   function reset() {
@@ -2265,7 +2255,7 @@ const engine = function () {
     if (ThreeFoldRep() >= 2) over = "Game drawn by threefold repetition";
     if (DrawMaterial()) over = "Game drawn by insufficient material";
 
-    var moves = getMoveList();
+    moves = getMoveList();
 
     let check = SqAttacked(
       GameBoard.pList[getPieceIndex(Kings[GameBoard.side], 0)],
